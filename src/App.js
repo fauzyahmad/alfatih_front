@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import Auth from './components/pages/auth/Auth'
+import Auth from './components/auth/Auth'
+import WebApp from './components/webapp/WebApp'
 import './App.css';
 
 class App extends Component {
@@ -9,6 +10,7 @@ class App extends Component {
       <Router>
         <div>
           {/* <Route exact path='/' component={Home} /> */}
+          <Route exact path='/' component={WebApp} />
           <Route path="/login" component={Auth} />
           <Route path="/register" component={Auth} />
         </div>

@@ -1,0 +1,10 @@
+.card {
+ box-shadow: 0.5rem .7rem 2rem rgba(0,0,0,.175)!important; 
+ transition: all 0.5s!important;
+ border: 0;
+} 
+
+.card:hover {
+ box-shadow: 0.5rem .2rem .7rem rgba(0,0,0,.15)!important;
+ cursor: pointer;
+}
