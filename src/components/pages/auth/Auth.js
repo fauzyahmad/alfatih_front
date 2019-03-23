@@ -6,6 +6,27 @@ import './Auth.css'
 import logoImage from '../image/logo.png'
 
 export class Auth extends Component {
+    constructor(props){
+        super(props);
+        // If you want to use the reset state function, you need to have a reference to the ValidationForm component
+        //If your React < 16.3, check https://reactjs.org/docs/refs-and-the-dom.html#callback-refs
+        this.formRef = React.createRef();
+        this.state = {
+            immediate:true,
+            setFocusOnError:true
+        }
+    }
+
+    handleSubmit = (e, formData, inputs) => {
+        e.preventDefault();
+        console.log(formData);
+        // alert(JSON.stringify(formData, null, 2));
+    }
+
+    handleErrorSubmit = (e,formData, errorInputs) => {
+        console.log(e,formData, errorInputs)
+    }
+
   render() {
     return (
       <Router>
@@ -16,8 +37,26 @@ export class Auth extends Component {
                 <div className="colLogin col-md-5 col-lg-4">
                     <div className="mt-5">
                         <img alt="Logo" src={logoImage} />
-                        <Route path='/login' component={Login} />
-                        <Route path='/register' component={Register} />
+                        <Route path='/login' render={props => (
+                            <React.Fragment>
+                                <Login onSubmit={this.handleSubmit.bind(this)}
+                                    onErrorSubmit={this.handleErrorSubmit.bind(this)}
+                                    ref={this.formRef}
+                                    immediate={this.state.immediate}
+                                    setFocusOnError={this.state.setFocusOnError}
+                                />
+                            </React.Fragment>
+                        )} />
+                        <Route path='/register' render={props => (
+                            <React.Fragment>
+                                <Register onSubmit={this.handleSubmit}
+                                    onErrorSubmit={this.handleErrorSubmit}
+                                    ref={this.formRef}
+                                    immediate={this.state.immediate}
+                                    setFocusOnError={this.state.setFocusOnError}
+                                />
+                            </React.Fragment>
+                        )} />
                     </div>
                 </div>
             </div>
