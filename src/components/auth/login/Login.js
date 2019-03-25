@@ -5,9 +5,9 @@ import {ValidationForm, TextInput} from 'react-bootstrap4-form-validation'
 export class Login extends Component {
   render() {
     return (
-      <div className="p-5 mt-5">
+      <div className="p-5 mt-2">
         <h1>Selamat datang,</h1>
-        <p>Silahkan masuk dengan akun anda</p>
+        <p>Uji kemampuanmu sebelum mengikuti SBMPTN di sini</p>
         <ValidationForm 
             onSubmit={this.props.onSubmit} 
             onErrorSubmit={this.props.onErrorSubmit}

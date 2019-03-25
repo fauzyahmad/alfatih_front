@@ -4,6 +4,7 @@ import Login from './login/Login'
 import Register from './register/Register'
 import './Auth.css'
 import logoImage from '../image/logo.png'
+import bgImage from '../image/auth-img.jpg'
 
 export class Auth extends Component {
     constructor(props){
@@ -32,11 +33,15 @@ export class Auth extends Component {
       <Router>
         <div className="container-fluid">
             <div className="row">
-                <div className="bgAuth col-md-7 col-lg-8 d-none d-md-block">
+                <div 
+                    className="bgAuth col-md-7 col-lg-8 d-none d-md-block"
+                    style={{backgroundImage: `url(${bgImage})`}}>
                 </div>
                 <div className="colLogin col-md-5 col-lg-4">
                     <div className="mt-5">
-                        <img alt="Logo" src={logoImage} />
+                        <div className="text-center">
+                            <img alt="Logo" src={logoImage} />
+                        </div>
                         <Route path='/login' render={props => (
                             <React.Fragment>
                                 <Login onSubmit={this.handleSubmit.bind(this)}

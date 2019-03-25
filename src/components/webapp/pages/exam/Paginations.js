@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { 
-  Container, 
-  Row, 
-  Col, 
-  Button, Pagination, PaginationItem, PaginationLink
+  Pagination, PaginationItem,
+  PaginationLink, Button
   } from 'reactstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronRight, faChevronLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -114,7 +114,23 @@ export class Paginations extends Component {
         }
         
     return (
-      <div>
+      <>
+          <div className="text-center mb-3 mt-3">
+            <Button color="secondary" 
+            size="md" className={pager.currentPage === 1 ? 'disabled' : ''}
+            onClick={() => this.setPage(pager.currentPage - 1)}>
+              <FontAwesomeIcon icon={faChevronLeft} color="white" size="1x"/> Soal Sebelumnya
+            </Button>{' '}
+            <Button color="primary" 
+            size="md" className={pager.currentPage === pager.totalPages ? 'd-none' : ''}
+            onClick={() => this.setPage(pager.currentPage + 1)}>
+              Soal Selanjutnya <FontAwesomeIcon icon={faChevronRight} color="white" size="1x"/>
+            </Button>
+            <Button color="success" 
+            size="md" className={pager.currentPage === pager.totalPages ? '' : 'd-none'}>
+              Submit Jawaban <FontAwesomeIcon icon={faCheckCircle} color="white" size="1x"/>
+            </Button>
+          </div>
             <Pagination className="navs">
                 {/* <PaginationItem>
                   <PaginationLink first 
@@ -143,7 +159,7 @@ export class Paginations extends Component {
                     href="#" />
                 </PaginationItem> */}
             </Pagination>
-      </div>
+      </>
     )
   }
 }

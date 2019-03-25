@@ -1,0 +1,43 @@
+.leaderboard {
+ box-shadow: 0.5rem .7rem 2rem rgba(0,0,0,.175)!important; 
+ transition: all 0.5s!important;
+ border: 0;
+ border-radius: 0.25rem;
+} 
+
+.leaderboard:hover {
+ box-shadow: 0.5rem .2rem .7rem rgba(0,0,0,.15)!important;
+ cursor: pointer;
+}
+
+.leaderboard {
+    height: 100%;
+}
+
+.header-board {
+  /* content: '';
+  width: 100%;
+  height: 660px;
+  z-index: -1000; */
+  background: linear-gradient(160deg,#02ccba,#2f339c);
+  border-radius: 0.25rem 0.25rem 0 0;
+  box-shadow: 0px 3px 5px 0px #c7c7c7;
+  /* -webkit-transform-origin: left bottom;
+  transform-origin: left bottom;
+  position: absolute;
+  top: 0;
+  left: 0; */
+}
+.user-bg {
+    background: linear-gradient(160deg,#02ccba,#2f339c);
+}
+
+.leaderboard .body-board {
+    overflow: auto;
+    height: 50vh;
+}
+
+.middle-div {
+    height: 50px;
+    line-height: 50px;
+}

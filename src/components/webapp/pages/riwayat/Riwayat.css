@@ -1,0 +1,15 @@
+thead {
+    background: linear-gradient(160deg,#02ccba,#2f339c);
+    color: white;
+}
+
+td:hover {
+    background: linear-gradient(160deg,#3feedf,#307adb);
+    color: #fff;
+    transform: scale(1.05)
+}
+
+td {
+    transition: all 0.3s
+}
+

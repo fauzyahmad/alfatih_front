@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
 import {
-    Collapse,
     Container,
     Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink} from 'reactstrap';
+    NavbarBrand,} from 'reactstrap';
 import './Header.css'
+import Sidebar from './Sidebar';
 
 export class Header extends Component {
   constructor(props) {
@@ -29,8 +25,9 @@ export class Header extends Component {
       <React.Fragment>
         <Navbar fixed="top" className="bg-primary" dark expand="md">
             <Container>
-                <NavbarBrand href="/">reactstrap</NavbarBrand>
-                <NavbarToggler onClick={this.toggle} />
+            <Sidebar pageWrapId={ "container" } />
+            <NavbarBrand className="ml-auto" href="/">Al Fatih College</NavbarBrand>
+                {/* <NavbarToggler onClick={this.toggle} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                     <Nav navbar>
                         <NavItem>
@@ -40,15 +37,11 @@ export class Header extends Component {
                             <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
                         </NavItem>
                     </Nav>
-                    {/* <Nav className="ml-auto">
-                        <NavItem>
-                            
-                        </NavItem>
-                    </Nav> */}
-                </Collapse>
+                      
+                </Collapse> */}
             </Container>
         </Navbar>
-        <div className="mb-5 pb-5" />
+        {/* <div className="mb-5 pb-5" /> */}
       </React.Fragment>
     )
   }

@@ -6,7 +6,7 @@ export class Register extends Component {
   render() {
     return (
       <div>
-        <div className="p-5 mt-5">
+        <div className="p-5 mt-2">
             <h1>Daftar Akun</h1>
             <p>Masukkan form pendaftaran</p>
             <ValidationForm onSubmit={this.props.onSubmit} 

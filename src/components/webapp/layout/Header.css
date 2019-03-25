@@ -1,4 +1,5 @@
-nav {
+.navbar {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.2), 0px 4px 20px 0 rgba(255, 255, 255, 0.19);
-    background: #fff
+    background: linear-gradient(160deg,#18e298,#2d3ad2)!important;
+
  }

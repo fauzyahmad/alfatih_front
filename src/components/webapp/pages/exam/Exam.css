@@ -1,5 +1,15 @@
 .navs {
     box-shadow: none!important;
-    display: table;
-    margin: auto
+    display: table!important;
+    margin: auto!important;
+    -webkit-overflow-scrolling: touch;
+}
+
+input[type="radio"]:checked+label {
+    /* color: #fff; */
+    /* background: linear-gradient(160deg,#02ccba,#2f339c); */
+}
+
+.checkValid {
+    padding: 1.5rem
 }
