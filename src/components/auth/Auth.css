@@ -1,10 +1,9 @@
 .bgAuth {
-    background-color: rgb(230, 230, 230);
-    /* background-image: url(https://latihansbmptn.com/storage/images/background.png); */
-    background-repeat: no-repeat;
+    
+    /* background-repeat: no-repeat; */
     background-size: cover;
-    height: 100%;
-    position: absolute;
+    /* height: 100%; */
+    position: absolute; 
 }
 
 .colLogin {

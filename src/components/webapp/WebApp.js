@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+// import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { 
   Container, 
   Row, 
@@ -9,38 +9,48 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight, faBook } from '@fortawesome/free-solid-svg-icons'
 import Panel from './layout/Panel'
-import Home from './pages/home/Home'
-import Exam from './pages/exam/Exam'
-import Header from './layout/Header'
-import Riwayat from './pages/riwayat/Riwayat';
+import axios from 'axios'
+import PropTypes from 'prop-types';
 // import Daftar from './pages/daftar/Daftar';
+const defaultProps = {
+   baseUrl: 'https://vps.carakde.id/api_alfatih/api'
+}
 export class WebApp extends Component {
   constructor(props) {
       super(props)
       this.state = {
-          pakets: [
-              { id: 1 },
-              { id: 2 },
-              { id: 3 },
-              { id: 4 },
-              { id: 5 },
-              { id: 6 },
-              { id: 7 },
-              { id: 8 },
-              { id: 9 },
-              { id: 10 },
-          ]
+          pakets: []
       }
   }
+
+  componentDidMount() {
+      this.getPacket()
+  }
+
+  getPacket = async () => {
+      try{
+        const headers = {
+            'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+            'Content-Type': 'application/json'
+        }
+        let resPacket = await axios.get(`${this.props.baseUrl}/student/packet`, {headers})
+        console.log(resPacket.data.studentPacket)
+        this.setState({pakets: resPacket.data.studentPacket})
+      } catch(e) {
+        console.log(e)
+      }
+      
+  }
+
+//   createStudentTest = async (e) => {
+    
+
+//   }
   render() {
     return (
-      <Router>
-        <React.Fragment >
+        <React.Fragment>
           <div id="web-app">
-          <Header />
-            <Route exact path='/' render={props => (
-              <>
-                <Container className="mt-5 pt-5" id="container">
+            <Container className="mt-5 pt-5" id="container">
                     <Row>
                         <Col sm="12" md="8" className="mb-4">
                             <Row>
@@ -60,9 +70,27 @@ export class WebApp extends Component {
                                                 color="#145dca" size="6x" 
                                                 className="mr-3" />
                                                 <div className="content-group">
-                                                    <h4>Paket {paket.id}</h4>
+                                                    <h4>{paket.packet.name}</h4>
                                                     <small style={{color: 'transparent'}}>Berisi soal-soal Saintek</small>
-                                                    <Link to="/cluster">
+                                                    <Link to={`/cluster/${paket.packet.name}`} 
+                                                    id={paket.packet_id}
+                                                    name={paket.packet_id}
+                                                    onClick={async () => {
+                                                        try {
+                                                            const headers = {
+                                                                'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                                                                'Content-Type': 'application/json'
+                                                            }
+                                                            const data = {
+                                                                packet_id: paket.packet_id
+                                                            }
+                                                            let postStudentTest = await axios.post(`${this.props.baseUrl}/student_test`, data, {headers})
+                                                            console.log(postStudentTest.data)
+                                                            localStorage.setItem('studentTest_id', postStudentTest.data.studentTest.id)
+                                                        } catch(e) {
+                                                            console.log(e);
+                                                        }
+                                                    }}>
                                                     <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
                                                         <h5 className="mt-2 mr-2 text-muted">Pilih Paket</h5>
                                                         <FontAwesomeIcon
@@ -82,18 +110,12 @@ export class WebApp extends Component {
                         </Col>
                     </Row>
                 </Container>
-              </>
-            )} />
-            <Route path='/cluster' component={Home} />
-            <Route path='/riwayat' component={Riwayat} />
-            <Route path='/exam' component={Exam} />
-          </div>
-          
+          </div>    
         </React.Fragment>
-      </Router>
-     
     )
   }
 }
+
+WebApp.defaultProps = defaultProps;
 
 export default WebApp

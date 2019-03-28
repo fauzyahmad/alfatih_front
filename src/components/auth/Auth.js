@@ -61,26 +61,7 @@ export class Auth extends Component {
                         <div className="text-center">
                             <img alt="Logo" src={logoImage} />
                         </div>
-                        <Route path='/login' render={props => (
-                            <React.Fragment>
-                                <Login onSubmit={this.handleSubmitLogin.bind(this)}
-                                    onErrorSubmit={this.handleErrorSubmit.bind(this)}
-                                    ref={this.formRef}
-                                    immediate={this.state.immediate}
-                                    setFocusOnError={this.state.setFocusOnError}
-                                />
-                            </React.Fragment>
-                        )} />
-                        <Route path='/register' render={props => (
-                            <React.Fragment>
-                                <Register onSubmit={this.handleSubmitRegister}
-                                    onErrorSubmit={this.handleErrorSubmit}
-                                    ref={this.formRef}
-                                    immediate={this.state.immediate}
-                                    setFocusOnError={this.state.setFocusOnError}
-                                />
-                            </React.Fragment>
-                        )} />
+
                     </div>
                 </div>
             </div>

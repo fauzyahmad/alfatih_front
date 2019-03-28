@@ -9,6 +9,7 @@ import {
     Card} from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp} from '@fortawesome/free-solid-svg-icons'
+import Header from '../../layout/Header'
 import Panel from '../../layout/Panel'
 import './Riwayat.css'
 
@@ -166,6 +167,7 @@ export class Riwayat extends Component {
     // const
     return (
       <React.Fragment>
+        {/* <Header /> */}
         <Container className="mt-5 pt-5" id="container">
             <Row>
                 <Col sm="12" md="8" className="mb-4">             
