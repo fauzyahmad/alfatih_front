@@ -7,9 +7,17 @@
 
 input[type="radio"]:checked+label {
     /* color: #fff; */
-    /* background: linear-gradient(160deg,#02ccba,#2f339c); */
+    border: linear-gradient(160deg,#02ccba,#2f339c);
 }
 
 .checkValid {
     padding: 1.5rem
+}
+
+.custom-control-input {
+    position: inherit!important;
+}
+
+.border-exam {
+    border: 3px solid #15da96;
 }

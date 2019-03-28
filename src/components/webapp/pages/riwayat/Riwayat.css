@@ -13,3 +13,19 @@ td {
     transition: all 0.3s
 }
 
+.react-bootstrap-table table {
+    display: block!important;
+    width: 100%!important;
+    overflow-x: auto!important;
+    -webkit-overflow-scrolling: touch!important;
+}
+
+/* @media screen and (min-width: 992) {
+    thead
+    td:hover
+    td
+    .react-bootstrap-table table {
+        display: block!important;
+    }
+} */
+

@@ -4,8 +4,10 @@ import Login from './login/Login'
 import Register from './register/Register'
 import './Auth.css'
 import logoImage from '../image/logo.png'
+import axios from 'axios'
 import bgImage from '../image/auth-img.jpg'
 
+const baseUrl = ''
 export class Auth extends Component {
     constructor(props){
         super(props);
@@ -18,9 +20,21 @@ export class Auth extends Component {
         }
     }
 
-    handleSubmit = (e, formData, inputs) => {
+
+    handleSubmitLogin = async (e, formData, inputs) => {
         e.preventDefault();
-        console.log(formData);
+        // var formData = new FormData();
+        // formData.append("email", "rizkhy45@gmail.com");
+        // formData.append("password", "123");
+        try {
+            let login = await axios.post('https://vps.carakde.id/api_alfatih/api/auth/login', formData)
+            console.log(login.data)
+            localStorage.setItem('access_token', login.data.access_token)
+            window.location.href = '/'
+        } catch(e) {
+            console.log(e)
+        }
+        // console.log(JSON.stringify(formData, 2))
         // alert(JSON.stringify(formData, null, 2));
     }
 
@@ -44,7 +58,7 @@ export class Auth extends Component {
                         </div>
                         <Route path='/login' render={props => (
                             <React.Fragment>
-                                <Login onSubmit={this.handleSubmit.bind(this)}
+                                <Login onSubmit={this.handleSubmitLogin.bind(this)}
                                     onErrorSubmit={this.handleErrorSubmit.bind(this)}
                                     ref={this.formRef}
                                     immediate={this.state.immediate}

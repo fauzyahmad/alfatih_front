@@ -47,6 +47,7 @@ export class Riwayat extends Component {
             text: 'Num#',
             align: 'center',
             sort: true,
+            // hidden: true,
             sortCaret: (order, column) => {
                 if (!order) return (<span>&nbsp;&nbsp;
                     <FontAwesomeIcon icon={faCaretDown} />

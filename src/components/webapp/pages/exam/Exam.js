@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
-import update from 'immutability-helper'
+// import update from 'immutability-helper'
+// import { RadioGroup, RadioButton } from 'react-radio-buttons';
 import { 
     Container, 
     Row, 
     Col, Card, Button, CardHeader, CardBody,
-    FormGroup, Label, CustomInput
+    PaginationItem, PaginationLink, Pagination
     } from 'reactstrap'
-import Paginations from './Paginations'
+// import Paginations from './Paginations'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircle, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
+import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import './Exam.css'
 
 
@@ -171,118 +175,150 @@ export class Exam extends Component {
                 ]
               }
             ],
-          pageOfItems: []
+            currentPage: 1,
+            examPerPage: 1
       }
-      this.onChangePage = this.onChangePage.bind(this);
+      this.handleClick = this.handleClick.bind(this);
   }
-    onChangePage(pageOfItems) {
-        // update state with new page of items
-        this.setState({ pageOfItems: pageOfItems });
-        // console.log(this.props.pager.currentPage)
+  componentDidMount() {
+      // reset page if exam array has changed
+      let examStorage = localStorage.getItem('exam')
+      if(examStorage !== null) {
+        this.setState({exam: JSON.parse(examStorage)})
+      }
+  }
+
+    handleClick(event) {
+        this.setState({
+          currentPage: Number(event.target.id)
+        });
+      }
+
+    onChangeAnswer = (e) => {
+
     }
-
-    // onChangeAnswer = (examIndex, choiceIndex) => {
-    //     const exams = {
-    //         exam: update(this.state.exam, {
-    //             [examIndex]: {
-    //                 choice: {
-    //                     0: {
-    //                         checked: {$set: true}
-    //                     }
-    //                 }
-    //             }
-    //         })
-    //     }
-    //     console.log(examIndex)
-
-    //     this.setState(exams)
-       
-    //     // this.state.exam.map((examIndex, idx) => 
-    //     //     examIndex.choice.map(choiceIndex => 
-    //     //         this.setState({exam: update(this.state.exam, { 1: { choice: { 1: { name: { $set: 'z' } } } } } )})
-    //     //     )
-    //     // )
-    //     // this.setState({
-    //     //     exam: this.state.exam.map((exams, indexs) => {
-    //     //         let choice;
-    //     //         if(indexs === examIndex) {
-    //     //             choice = exams.choice.map((choices, index) => {
-    //     //                 if(index === choiceIndex) {
-    //     //                     return {
-    //     //                         ...choices,
-    //     //                         checked: true
-    //     //                     }
-    //     //                 }
-    //     //                 return choices
-    //     //             })
-    //     //             console.log(choice)
-    //     //             return {
-    //     //                 ...exams,
-    //     //                 choice: choice
-    //     //             }
-    //     //         }
-    //     //         return exams
-    //     //     })
-    //     // })
-
-
-
-    // }
-    // this.setState({exam: update(this.state.exam, { 0: { choice: { 1: { name: { $set: 'z' } } } } } )})
-    // onChangeName = () => {
-    //     this.se
-    // }
-    
   
   render() {
     const numExam = this.state.exam.length
-    // const exams = this.state.exam[0].choice[0]
-    // console.log(exams)
-    // this.updateItem(2, {question: 'abs'})
-    // const arrayChoice = []
-    // this.state.pageOfItems.map(item => 
-    //     // console.log(item.choice) 
-    //     // item.choice.map(choice => console.log(choice))
-    // )
+    const { exam, currentPage, examPerPage } = this.state;
+    const indexOfLastExam = currentPage * examPerPage;
+    const indexOfFirstTodo = indexOfLastExam - examPerPage;
+    const currentExam = exam.slice(indexOfFirstTodo, indexOfLastExam);
+    // console.log(exam)
+    // console.log(JSON.parse(localStorage.getItem('exam')))
+    // console.log(currentExam);
+
+    const renderExams = currentExam.map(exam => {
+        return <Card key={exam.id}>
+            <CardHeader>Soal {exam.id} dari {numExam}</CardHeader>
+            <CardBody>
+                <h5>{exam.question}</h5>
+                {exam.choice.map(choice => 
+                    <div
+                        className={choice.checked ? 'p-3 border-exam' : 'p-3'} 
+                        style={{display: 'flex', alignItems: 'flex-end'}}
+                        key={choice.id}
+                    >
+                        <FontAwesomeIcon
+                        icon={choice.checked ? faCheckCircle : faCircle} 
+                        size="2x" 
+                        color={choice.checked ? '#0e9ab3': 'black'}
+                        className="mr-3"
+                        key={choice.id}
+                            id={choice.id} 
+                            name={exam.id}
+                        onClick={e => {
+                        var index = this.state.exam.findIndex(arr => 
+                            arr.id === exam.id
+                        )
+                        var item =  this.state.exam;
+                        // console.log(item[index])
+                        var index2 = item[index].choice.findIndex(arr => arr.id === choice.id)
+                        console.log(index2)
+
+                            if (choice.checked){
+                                for (let i in item[index].choice){
+                                    item[index].choice[i].checked = false
+                                }                                                         
+                                // item[index].choice[index2].checked = false
+                                // console.log(item[index].choice[index2].name)
+                                this.setState({
+                                    pageOfItems : item
+                                })
+                                localStorage.setItem('exam', JSON.stringify(item))
+                                return
+                            }                                        
+                            
+                            for (let i in item[index].choice){
+                                item[index].choice[i].checked = false
+                            }
+                                                                                        
+                            item[index].choice[index2].checked = true
+                            // console.log(item[index].choice[index2].name)
+                            this.setState({
+                                pageOfItems : item
+                            })
+                            localStorage.setItem('exam', JSON.stringify(item))
+                        }}
+                        />
+                        <h6 name={exam.id}>{choice.name}</h6>
+                    </div>
+                )}
+            </CardBody>
+        </Card>
+    })
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(exam.length / examPerPage); i++) {
+      pageNumbers.push(i);
+    }
+    //get last array
+    var last =  function(array, n) {
+        if (array == null) 
+          return void 0;
+        if (n == null) 
+           return array[array.length - 1];
+        return array.slice(Math.max(array.length - n, 0));  
+        };
+
+    const renderPageNumbers = pageNumbers.map(number => {
+        return (
+            <PaginationItem key={number}>
+                <PaginationLink id={number} 
+                    onClick={this.handleClick}
+                >
+                    {number}
+                </PaginationLink>
+            </PaginationItem>
+        )
+    })
+    
     return (
       <React.Fragment>
         <Container className="mt-5 pt-5">
             <Row>
                 <Col>
-                
-                        {this.state.pageOfItems.map(item =>
-                            // <div key={item.id}>
-                            // <h3>{item.question}</h3>
-                            // <p>{item.answer[0]}</p>
-                            // <p>{item.answer[1]}</p>
-                            // <p>{item.answer[2]}</p>
-                            // <p>{item.answer[3]}</p>
-                            // </div>
-                            <Card key={item.id}>
-                                <CardHeader>Soal {item.id} dari {numExam}</CardHeader>
-                                    <CardBody>
-                                        <h5>{item.question}</h5>
-                                        <FormGroup>
-                                            {/* <Label for="exampleCheckbox">Radios</Label> */}
-                                            {item.choice.map(choice =>
-                                                <CustomInput type="radio" 
-                                                    key={choice.id}
-                                                    id={choice.id} 
-                                                    name={item.id}
-                                                    value={choice.name} defaultChecked={choice.checked}
-                                                    className="checkValid" 
-                                                    label={choice.name}
-                                                    // onChange={this.onChangeAnswer}
-                                                />
-                                            )}
-                                        </FormGroup>
-                                    </CardBody>
-                                {/* <CardFooter>
-                                    
-                                </CardFooter> */}
-                            </Card>
-                        )}
-                        <Paginations items={this.state.exam} onChangePage={this.onChangePage} />
+                    {renderExams}
+                    <div className="text-center mb-3 mt-3">
+                        <Button color="secondary"
+                            size="md" className={currentPage === 1 ? 'd-none' : ''}
+                            onClick={() => this.setState({currentPage: currentPage - 1})}>
+                            <FontAwesomeIcon icon={faChevronLeft} color="white" size="1x"/> Soal Sebelumnya
+                        </Button>{' '}
+                        <Button color="primary"
+                            size="md" className={currentPage === last(pageNumbers) ? 'd-none' : ''}
+                            onClick={() => this.setState({currentPage: currentPage + 1})}>
+                            Soal Selanjutnya <FontAwesomeIcon icon={faChevronRight} color="white" size="1x"/>
+                        </Button>
+                        <Button color="success"
+                            size="md" className={currentPage === last(pageNumbers) ? '' : 'd-none'}
+                            >
+                            Submit Jawaban <FontAwesomeIcon icon={faCheckCircle} color="white" size="1x"/>
+                        </Button> {' '}
+                    </div>
+                    <Pagination className="navs">
+                        {renderPageNumbers}
+                    </Pagination>
                 </Col>
             </Row>
         </Container>

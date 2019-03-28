@@ -8,9 +8,46 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLightbulb, faChevronRight, faChartLine } from '@fortawesome/free-solid-svg-icons'
 import Panel from '../../layout/Panel'
+import SweetAlert from 'react-bootstrap-sweetalert'
 import './Home.css'
 
 export class Home extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      alert: null
+    };
+  } 
+
+  deleteThisGoal() {
+    const getAlert = () => (
+      <SweetAlert 
+        info
+        showCancel
+        title="Apakah anda siap untuk mulai Tes?"
+        confirmBtnText="Ya, Mulai"
+        cancelBtnText="Nanti dulu"
+        confirmBtnBsStyle="info"
+        cancelBtnBsStyle="danger"
+        onCancel={() => this.hideAlert()}
+        allowOutsideClick={true} 
+        onConfirm={() => window.location.href="/exam"}
+      >
+      </SweetAlert>
+    );
+
+    this.setState({
+      alert: getAlert()
+    });
+  }
+
+  hideAlert() {
+    console.log('Hiding alert...');
+    this.setState({
+      alert: null
+    });
+  }
   render() {
     return (
       <React.Fragment>
@@ -37,7 +74,8 @@ export class Home extends Component {
                                         <h4>TPA</h4>
                                         <small>Berisi soal-soal Tes Potensi akademik</small>
                                         {/* <div></div> */}
-                                        <Link to="/login">
+                                        <Link to="#"
+                                        onClick={() => this.deleteThisGoal()}>
                                         <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
                                             <h5 className="mt-2 mr-2 text-muted">Pilih Soal</h5>
                                             <FontAwesomeIcon
@@ -67,7 +105,8 @@ export class Home extends Component {
                                         <h4>SAINTEK</h4>
                                         <small>Berisi soal-soal Saintek</small>
                                         {/* <div></div> */}
-                                        <Link to="/login">
+                                        <Link to="#"
+                                        onClick={() => this.deleteThisGoal()}>
                                         <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
                                             <h5 className="mt-2 mr-2 text-muted">Pilih Soal</h5>
                                             <FontAwesomeIcon
@@ -85,6 +124,7 @@ export class Home extends Component {
                     <Panel />
                 </Col>
             </Row>
+            {this.state.alert}
         </Container>
       </React.Fragment>
     )
