@@ -7,7 +7,7 @@ import logoImage from '../image/logo.png'
 import axios from 'axios'
 import bgImage from '../image/auth-img.jpg'
 
-const baseUrl = ''
+// const baseUrl = ''
 export class Auth extends Component {
     constructor(props){
         super(props);
@@ -16,7 +16,7 @@ export class Auth extends Component {
         this.formRef = React.createRef();
         this.state = {
             immediate:true,
-            setFocusOnError:true
+            setFocusOnError:true,
         }
     }
 
@@ -36,6 +36,11 @@ export class Auth extends Component {
         }
         // console.log(JSON.stringify(formData, 2))
         // alert(JSON.stringify(formData, null, 2));
+    }
+
+    handleSubmitRegister = (e, formData, inputs) => {
+        alert(JSON.stringify(formData, null, 2));
+        
     }
 
     handleErrorSubmit = (e,formData, errorInputs) => {
@@ -68,7 +73,7 @@ export class Auth extends Component {
                         )} />
                         <Route path='/register' render={props => (
                             <React.Fragment>
-                                <Register onSubmit={this.handleSubmit}
+                                <Register onSubmit={this.handleSubmitRegister}
                                     onErrorSubmit={this.handleErrorSubmit}
                                     ref={this.formRef}
                                     immediate={this.state.immediate}

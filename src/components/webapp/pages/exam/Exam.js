@@ -176,16 +176,71 @@ export class Exam extends Component {
               }
             ],
             currentPage: 1,
-            examPerPage: 1
+            examPerPage: 1,
+            time: ''
       }
       this.handleClick = this.handleClick.bind(this);
+    //   this.countDownTime = this.countDownTime.bind(this)
   }
+
+  countDownTime() {
+    if(localStorage.getItem('time') === null) {
+        localStorage.setItem('time', new Date().getTime());
+    }
+
+    var timeStorage = parseInt(localStorage.getItem('time'))
+    var countDownDate = new Date(timeStorage + 90*60000);
+
+    // Update the count down every 1 second
+    try{
+        var x = setInterval(async() => {
+
+            // Get todays date and time
+            // waktu server
+            var now = new Date().getTime();
+                
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+                
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            console.log(hours)
+        
+                
+            // Output the result in an element with id="demo"
+            // document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+            // + minutes + "m " + seconds + "s ";
+            this.setState({time: `${hours}h ${minutes}m ${seconds}s`})
+                
+            // If the count down is over, write some text 
+            if (distance < 0) {
+                clearInterval(x);
+                // document.getElementById("demo").innerHTML = "EXPIRED";
+                localStorage.removeItem('time')
+            }
+            }, 1000)
+          
+        } catch(e) {
+            console.log(e);
+            
+    }
+  }
+    
+
   componentDidMount() {
       // reset page if exam array has changed
       let examStorage = localStorage.getItem('exam')
       if(examStorage !== null) {
         this.setState({exam: JSON.parse(examStorage)})
       }
+  }
+
+  componentWillMount(){
+      //   this.countDownTime()
+    this.countDownTime(this)
   }
 
     handleClick(event) {
@@ -197,8 +252,13 @@ export class Exam extends Component {
     onChangeAnswer = (e) => {
 
     }
+    
+    
   
   render() {
+    // Set the date we're counting down to
+    
+    // this.setState({time: `${this.hours}h ${minutes}m ${seconds}`})
     const numExam = this.state.exam.length
     const { exam, currentPage, examPerPage } = this.state;
     const indexOfLastExam = currentPage * examPerPage;
@@ -210,7 +270,14 @@ export class Exam extends Component {
 
     const renderExams = currentExam.map(exam => {
         return <Card key={exam.id}>
-            <CardHeader>Soal {exam.id} dari {numExam}</CardHeader>
+            <CardHeader>
+                <h6 className="float-left">Soal {exam.id} dari {numExam}</h6>
+                <h6 className="float-right">Waktu Tersisa: 
+                    <span className="text-danger">
+                        {' '}{this.state.time}
+                    </span>
+                </h6>
+            </CardHeader>
             <CardBody>
                 <h5>{exam.question}</h5>
                 {exam.choice.map(choice => 
@@ -237,6 +304,9 @@ export class Exam extends Component {
                         console.log(index2)
 
                             if (choice.checked){
+                                
+                                item[index].checked = false;
+                                
                                 for (let i in item[index].choice){
                                     item[index].choice[i].checked = false
                                 }                                                         
@@ -252,7 +322,9 @@ export class Exam extends Component {
                             for (let i in item[index].choice){
                                 item[index].choice[i].checked = false
                             }
-                                                                                        
+                                       
+                            item[index].checked = true;
+
                             item[index].choice[index2].checked = true
                             // console.log(item[index].choice[index2].name)
                             this.setState({
@@ -278,13 +350,17 @@ export class Exam extends Component {
           return void 0;
         if (n == null) 
            return array[array.length - 1];
-        return array.slice(Math.max(array.length - n, 0));  
+        return array.slice(Math.max(array.length - n, 0));
         };
 
-    const renderPageNumbers = pageNumbers.map(number => {
+    const renderPageNumbers = pageNumbers.map((number, i) => {
         return (
-            <PaginationItem key={number}>
-                <PaginationLink id={number} 
+            <PaginationItem 
+                className={currentPage === number ? 'active' : ''} 
+                key={number}>
+                <PaginationLink 
+                    style={exam[i].checked ? {background : "#18d19f", color: '#fff' } : {background: "white", color: '#007bff'} } 
+                    id={number} 
                     onClick={this.handleClick}
                 >
                     {number}

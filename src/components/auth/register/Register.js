@@ -1,8 +1,35 @@
 import React, { Component } from 'react'
 import {Link} from 'react-router-dom'
-import {ValidationForm, TextInput} from 'react-bootstrap4-form-validation'
+import {ValidationForm, TextInput, SelectGroup} from 'react-bootstrap4-form-validation'
+import Select from 'react-select';
+import { Input } from 'reactstrap'
+import axios from 'axios';
+import makeAnimated from 'react-select/lib/animated';
 
+const options = [
+  { value: '1', label: 'Chocolate' },
+  { value: '2', label: 'Strawberry' },
+  { value: '3', label: 'Vanilla' }
+];
+const urlSekolah = 'https://jendela.data.kemdikbud.go.id/api/index.php/Csekolah/detailSekolahGET?mst_kode_wilayah=196000&bentuk=sma'
 export class Register extends Component {
+    state = {
+        id_sekolah: '',
+        sekolah: ''
+    }
+
+    componentDidMount() {
+        axios.get(urlSekolah)
+        .then(res => {
+            console.log(res)
+        })
+    }
+    handleChange = (selectedOption) => {
+        // this.setState({ selectedOption });
+        console.log(`Option selected:`, selectedOption);
+        this.setState({id_sekolah: selectedOption.value})
+        this.setState({sekolah: selectedOption.label})
+    }
   render() {
     return (
       <div>
@@ -30,17 +57,6 @@ export class Register extends Component {
                 <div className="form-group">
                     <TextInput
                         className="form-control"
-                        type="text"
-                        name="username"
-                        id="username"
-                        required
-                        errorMessage="Username harus diisi"
-                        placeholder="Username..." 
-                    />
-                </div>
-                <div className="form-group">
-                    <TextInput
-                        className="form-control"
                         type="email"
                         name="email"
                         id="email"
@@ -58,6 +74,57 @@ export class Register extends Component {
                         required
                         errorMessage="Password harus diisi"
                         placeholder="Password..." 
+                    />
+                </div>
+                <div className="form-group">
+                    <SelectGroup name="cluster_id" id="color"
+                        required errorMessage="Kluster harus dipilih"
+                    >
+                        <option value="">--- Pilih Kluster ---</option>
+                        <option value="1">SAINTEK</option>
+                        <option value="2">SOSHUM</option>
+                    </SelectGroup>                
+                </div>
+                <div className="form-group">
+                    <Input name="birthdate"
+                    type="date"
+                    id="date"
+                    required
+                    errorMessage="Tanggal Lahir harus diisi">
+                    </Input>
+                </div>
+                <div className="form-group">
+                    <Select
+                        // value={selectedOption}
+                        onChange={this.handleChange}
+                        components={makeAnimated()}
+                        options={options}
+                        required
+                        placeholder="Masukkan Nama Sekolah"
+                    />
+                </div>
+                <div className="form-group d-none">
+                    <TextInput
+                        className="form-control"
+                        type="text"
+                        name="id_sekolah"
+                        id="id_sekolah"
+                        value={this.state.id_sekolah}
+                        // required
+                        errorMessage="ID sekolah"
+                        placeholder="ID Sekolah" 
+                    />
+                </div>
+                <div className="form-group d-none">
+                    <TextInput
+                        className="form-control"
+                        type="text"
+                        name="sekolah"
+                        id="sekolah"
+                        value={this.state.sekolah}
+                        // required
+                        errorMessage="Sekolah"
+                        placeholder="Sekolah" 
                     />
                 </div>
                 <button
