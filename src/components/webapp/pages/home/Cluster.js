@@ -22,7 +22,8 @@ export class Cluster extends Component {
 
     this.state = {
       alert: null,
-      clusters: []
+      clusters: [],
+      start_date: ''
     };
   }
   
@@ -30,24 +31,61 @@ export class Cluster extends Component {
     this.getStudentTestGroup()
   }
 
-  getStudentTestGroup = async () => {
-    try{
+  getStudentTestGroup = () => {
       const headers = {
           'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
           'Content-Type': 'application/json'
       }
-      let resStudentTestGroup = await axios.get(
+      axios.get(
         `${this.props.baseUrl}/student_test/
           ${localStorage.getItem('studentTest_id')}`, {headers})
+        .then(res => {
+          console.log(res.data)
+          this.setState({clusters: res.data.studentTest.student_test_question_groups})
+        }).catch(e => {
+          console.log(e)
+        })
         // console.log(resStudentTestGroup)
-        this.setState({clusters: resStudentTestGroup.data.studentTest.student_test_question_groups})
+  }
+
+  // deleteThisGoal() {
+    
+
+    
+  // }
+
+  startExam = async () => {
+    try {
+      const headers = {
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+        'Content-Type': 'application/json'
+      }
+      const data = {
+        _method:'PUT',
+        on_progress:1,
+        start_datetime: new Date()
+      }
+      const url = `https://vps.carakde.id/api_alfatih/api/student/test/answer/
+      ${localStorage.getItem('studentTestQuestion')}`
+      let resStartExam = await axios.post(url, data, {headers})
+      console.log(resStartExam)
     } catch(e) {
       console.log(e)
     }
   }
 
-  deleteThisGoal() {
-    const getAlert = () => (
+  hideAlert() {
+    console.log('Hiding alert...');
+    this.setState({
+      alert: null
+    });
+  }
+
+  // toExam() {
+  //   localStorage.setItem('studentTestQuestion')
+  // }
+  render() {
+    const getAlert = (e) => (
       <SweetAlert 
         info
         showCancel
@@ -58,23 +96,10 @@ export class Cluster extends Component {
         cancelBtnBsStyle="danger"
         onCancel={() => this.hideAlert()}
         allowOutsideClick={true} 
-        onConfirm={() => window.location.href="/exam"}
+        onConfirm={() => this.startExam()}
       >
       </SweetAlert>
     );
-
-    this.setState({
-      alert: getAlert()
-    });
-  }
-
-  hideAlert() {
-    console.log('Hiding alert...');
-    this.setState({
-      alert: null
-    });
-  }
-  render() {
     return (
       <React.Fragment>
         {/* <Header /> */}
@@ -103,10 +128,18 @@ export class Cluster extends Component {
                                           <h4>{cluster.question_group.category.name}</h4>
                                           <small style={{color: 'transparent'}}>Berisi soal-soal Tes Potensi akademik</small>
                                           {/* <div></div> */}
-                                          <Link to="#"
-                                          onClick={() => this.deleteThisGoal()}>
+                                          <Link className={cluster.completed === 1 ? 'disabled': ''} to="#"
+                                          onClick={() => {
+                                            localStorage.setItem('studentTestQuestion', cluster.id)
+                                            
+                                            if(cluster.on_progress === 0 && cluster.start_datetime === null) {
+                                              this.setState({alert: getAlert()})
+                                              return
+                                            }
+                                          }
+                                          }>
                                           <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
-                                              <h5 className="mt-2 mr-2 text-muted">Pilih Soal</h5>
+                                              <h5 className="mt-2 mr-2 text-muted">{cluster.on_progress === 0 && cluster.start_datetime === null ? 'Pilih Soal' : 'Lanjutkan'}</h5>
                                               <FontAwesomeIcon
                                               icon={faChevronRight} 
                                               size="2x" className="mt-1" color="#6c757d"/>

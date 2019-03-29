@@ -36,6 +36,7 @@ export class WebApp extends Component {
         let resPacket = await axios.get(`${this.props.baseUrl}/student/packet`, {headers})
         console.log(resPacket.data.studentPacket)
         this.setState({pakets: resPacket.data.studentPacket})
+        console.log(this.state.pakets)
       } catch(e) {
         console.log(e)
       }
