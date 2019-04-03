@@ -60,7 +60,7 @@ input, textarea, select, .css-vj8t7z{
   height: 100px;
 }
 
-input[type="date"]:before {
+/* input[type="date"]:before {
   content: attr(placeholder) !important;
   color: #aaa;
   margin-right: 0.5em;
@@ -68,6 +68,14 @@ input[type="date"]:before {
 input[type="date"]:focus:before,
 input[type="date"]:valid:before {
   content: "";
+} */
+
+input[type="date"]::before{
+  color: #aaa;
+  content: attr(placeholder) ": ";
+}
+input[type="date"]:focus::before {
+  content: "" !important;
 }
 
 .border-green {
