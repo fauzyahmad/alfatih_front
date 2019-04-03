@@ -5,7 +5,8 @@ import {
     Container, 
     Row, 
     Col, Card, Button, CardHeader, CardBody,
-    PaginationItem, PaginationLink, Pagination
+    PaginationItem, PaginationLink, Pagination, Modal,
+    ModalBody
     } from 'reactstrap'
 // import Header from '../../layout/Header'
 // import Paginations from './Paginations'
@@ -14,9 +15,12 @@ import { faCircle, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import './Exam.css'
 import axios from 'axios'
-import PropTypes from 'prop-types';
+import SweetAlert from 'react-bootstrap-sweetalert'
+import successRegister from '../../../image/verified.svg'
+// import PropTypes from 'prop-types';
+// import { throws } from 'assert';
 const defaultProps = {
-   baseUrl: 'https://vps.carakde.id/api_alfatih/api'
+   baseUrl: 'http://157.230.33.225/api_alfatih/api'
 }
 
 export class Exam extends Component {
@@ -26,53 +30,57 @@ export class Exam extends Component {
         exam: '',
         currentPage: 1,
         examPerPage: 1,
-        time: ''
+        time: '',
+        modal: false,
+        backdrop: 'static',
+        alert: null
       }
       this.handleClick = this.handleClick.bind(this);
+      this.toggle = this.toggle.bind(this);
     //   this.countDownTime = this.countDownTime.bind(this)
   }
 
+  toggle() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
+    this.finishExam()
+  }
+
   countDownTime() {
-    if(localStorage.getItem('time') === null) {
-        localStorage.setItem('time', new Date().getTime());
-    }
-
-    var timeStorage = parseInt(localStorage.getItem('time'))
+    
     var waktuKerja = this.state.exam.question_group.time_in_minutes
-    if(localStorage.getItem('waktu_kerja') === null) {
-        localStorage.setItem('waktu_kerja', waktuKerja);
+    var matchDate = this.state.exam.start_datetime
+    var match = matchDate.match(/^(\d+)-(\d+)-(\d+) (\d+)\:(\d+)\:(\d+)$/)
+    var startDateTime = new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6])
+    
+    var durationTime = new Date().getTime() - startDateTime.getTime()
+    var countDownTime = (waktuKerja*60000) - durationTime
+    countDownTime =  countDownTime / 1000
+    function component(x, v) {
+        return Math.floor(x / v);
     }
-    var countDownDate = new Date(timeStorage + parseInt(localStorage.getItem('waktu_kerja'))*60000);
-
     // Update the count down every 1 second
-    try{
+    try {
         var x = setInterval(async() => {
-
-            // Get todays date and time
-            // waktu server
-            var now = new Date().getTime();
+            // console.log('perhitungan count', count-1)
+            // localStorage.setItem(`count`, parseInt(localStorage.getItem(`count`)) - 1);
+            countDownTime = countDownTime-1
+            console.log('countdown', countDownTime)      
                 
-            // Find the distance between now and the count down date
-            var distance = countDownDate - now;
-                
-            // Time calculations for days, hours, minutes and seconds
-            // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            console.log(hours)
-        
-                
-            // Output the result in an element with id="demo"
-            // document.getElementById("demo").innerHTML = days + "d " + hours + "h "
-            // + minutes + "m " + seconds + "s ";
-            this.setState({time: `${hours}h ${minutes}m ${seconds}s`})
+            var hours = component(countDownTime,      60 * 60) % 24,
+                minutes = component(countDownTime,           60) % 60,
+                seconds = component(countDownTime,            1) % 60;
+            this.setState({time: `${hours}:${minutes}:${seconds}`})
                 
             // If the count down is over, write some text 
-            if (distance < 0) {
+            if (countDownTime < -1) {
                 clearInterval(x);
                 // document.getElementById("demo").innerHTML = "EXPIRED";
-                localStorage.removeItem('time')
+                localStorage.removeItem('count')
+                console.log('waktu habis')
+                this.finishExam()
+                return
             }
             }, 1000)
           
@@ -87,53 +95,146 @@ export class Exam extends Component {
             'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
             'Content-Type': 'application/json'
         }
-        let responseExams = await axios.get(`${this.props.baseUrl}/student/test/question_group/
+        let responseExams = await axios.get(`http://157.230.33.225/api_alfatih/api/student/test/question_group/
         ${localStorage.getItem('studentTestQuestion')}`, {headers})
-          let response = await responseExams.data.studentTestQuestionGroup
-          localStorage.setItem('exams', JSON.stringify(response))
-          console.log(localStorage.getItem('exams'))
+          let response = responseExams.data.studentTestQuestionGroup
           this.setState({exam: response})
-          console.log(this.state.exam)
+          localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(response))
+        //   console.log(localStorage.getItem('exams'))
+        //   console.log(this.state.exam)
     } catch(e) {
         console.log(e)
+    }
+  }
+
+  finishExam = async () => {
+    try {
+    //   var d = new Date();
+    //   d = new Date(d.getTime() - 3000000);
+    //   var date_format_str = d.getFullYear().toString()+"-"+((d.getMonth()+1).toString().length==2?(d.getMonth()+1).toString():"0"+(d.getMonth()+1).toString())+"-"+(d.getDate().toString().length==2?d.getDate().toString():"0"+d.getDate().toString())+" "+(d.getHours().toString().length==2?d.getHours().toString():"0"+d.getHours().toString())+":"+((parseInt(d.getMinutes()/5)*5).toString().length==2?(parseInt(d.getMinutes()/5)*5).toString():"0"+(parseInt(d.getMinutes()/5)*5).toString())+":00";
+    // // console.log(date_format_str);
+      const headers = {
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+        'Content-Type': 'application/json'
+      }
+      const data = {
+        _method:'PUT',
+        on_progress:0,
+        completed: 1
+      }
+      const url = `http://157.230.33.225/api_alfatih/api/student/test/question_group/
+      ${localStorage.getItem('studentTestQuestion')}/update`
+      let resStartExam = await axios.post(url, data, {headers})
+      console.log(resStartExam)
+      localStorage.removeItem(`exams${localStorage.getItem('studentTestQuestion')}`)
+    //   this.setState({alert: this.getAlertSubmitted()})
+
+    //   this.getExam()
+    } catch(e) {
+      console.log(e)
     }
   }
 
   componentDidMount() {
       // reset page if exam array has changed
     //   this.getExams()
-    this.countDownTime(this)
+    this.countDownTime(this) 
+    // this.forceUpdate()
     
   }
 
   componentWillMount(){
       //   this.countDownTime()
-      let examStorage = localStorage.getItem('exams')
+      let examStorage = localStorage.getItem(`exams${localStorage.getItem('studentTestQuestion')}`)
       if(examStorage !== null) {
         this.setState({exam: JSON.parse(examStorage)})
-      } else {
-        this.getExams()
+        return
       }
+      this.getExams()
+      
     // this.setState({exams: 'abc'})
     // console.log('did mount', this.state.exams)
     // this.countDownTime(this)
   }
 
+//   componentWillUnmount() {
+//       console.log('unmount exam')
+//       this.setState({
+//           exam: '',
+//           time: ''
+//       })
+//   }
+
     handleClick(event) {
         this.setState({
           currentPage: Number(event.target.id)
         });
-      }
-
-    onChangeAnswer = (e) => {
-
     }
-    
-    
+
+    hideAlert() {
+        // console.log('Hiding alert...');
+        this.setState({
+          alert: null
+        });
+    }
   
   render() {
-    console.log(this.state.exam.student_test_answers)
-    console.log(this.state.exam)
+    const getAlertSubmitted = () => (
+        <SweetAlert
+            success
+            confirmBtnText="Ok"
+            confirmBtnBsStyle="success"
+            title="Selamat"
+            // cancelBtnBsStyle="default"
+            onConfirm={() => {
+                this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
+            }}
+            // onCancel={this.hideAlert}
+            >
+            Kamu telah selesai mengerjakan Soal-soal yang ada
+        </SweetAlert>
+    )
+
+    const getAlertConfirmation = (e) => (
+        <SweetAlert
+            warning
+            showCancel
+            confirmBtnText="Ya"
+            cancelBtnText="Batalkan"
+            confirmBtnBsStyle="danger"
+            cancelBtnBsStyle="default"
+            title="Sudah Selesai?"
+            onConfirm={() => {
+                const finishExam = async () => {
+                    try {
+                   
+                      const headers = {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                        'Content-Type': 'application/json'
+                      }
+                      const data = {
+                        _method:'PUT',
+                        on_progress:0,
+                        completed: 1
+                      }
+                      const url = `http://157.230.33.225/api_alfatih/api/student/test/question_group/
+                      ${localStorage.getItem('studentTestQuestion')}/update`
+                      let resStartExam = await axios.post(url, data, {headers})
+                      console.log(resStartExam)
+                      localStorage.removeItem(`exams${localStorage.getItem('studentTestQuestion')}`)
+                      this.setState({alert: getAlertSubmitted()})
+                    //   this.getExam()
+                    } catch(e) {
+                      console.log(e)
+                    }
+                  }
+                finishExam()
+            }}
+            onCancel={() => this.hideAlert()}
+            >
+            Apakah yakin dengan jawaban-jawaban anda?
+        </SweetAlert>
+    )
     // Set the date we're counting down to
     
     // this.setState({time: `${this.hours}h ${minutes}m ${seconds}`})
@@ -147,34 +248,35 @@ export class Exam extends Component {
     // console.log(exam.student_test_answers)
     console.log(currentExam);
 
-    const renderExams = currentExam.map(exam => {
+    const renderExams = currentExam.map((exam, idx) => {
         console.log(exam);
         return <Card key={exam.id}>
             <CardHeader>
-                <h6 className="float-left">Soal  dari {numExam}</h6>
-                <h6 className="float-right">Waktu Tersisa: 
+                <h6 className="float-left">Soal {exam.question.number} dari {numExam}</h6>
+                <h6 className="float-right">Waktu: 
                     <span className="text-danger">
                         {' '}{this.state.time}
                     </span>
                 </h6>
             </CardHeader>
             <CardBody>
-                <h5>{exam.question.text}</h5>
+                <h5>{exam.question.number}. {exam.question.text}</h5>
                 {exam.question.choices.map(choice => 
                     <div
-                        className="p-3" 
-                        style={{display: 'flex', alignItems: 'flex-end'}}
+                        className={exam.question_choice_id === choice.id ? 
+                            'p-3 fade-in question-choices answer' : 'p-3 question-choices'}
                         key={choice.id}
                     >
                         <FontAwesomeIcon
                             icon={exam.question_choice_id === choice.id ? faCheckCircle : faCircle} 
                             size="2x" 
                             color={exam.question_choice_id === choice.id ? "#1cd39d" : "black"}
-                            className="mr-3"
+                            className={exam.question_choice_id === choice.id ? "fade-in mr-3" : "mr-3"}
                             key={choice.id}
                             id={choice.id} 
                             name={exam.id}
                             onClick={e => {
+                                var studentTestExam = this.state.exam
                                 var studentTestAnswerIdx = this.state.exam.student_test_answers.findIndex(arr =>
                                         arr.id === exam.id
                                     )
@@ -200,16 +302,20 @@ export class Exam extends Component {
                                                 question_choice_id: 0,
                                                 _method:'PUT'
                                             }
-                                            const url = `https://vps.carakde.id/api_alfatih/api/student/test/answer/${exam.id}`
+                                            const url = `http://157.230.33.225/api_alfatih/api/student/test/answer/${exam.id}`
                                             let falseCheck = await axios.post(url, data, {headers})
+                                            
                                             console.log(falseCheck);
-                                            await this.getExams()
-                                            studentTest[studentTestAnswerIdx].checked = false  
+                                            console.log(studentTestExam)
+                                            // this.getExams() 
                                         } catch(e) {
                                             console.log(e);
                                         }
                                     })()
-                                    
+                                    studentTest[studentTestAnswerIdx].question_choice_id = 0
+                                    studentTest[studentTestAnswerIdx].checked = false 
+                                    this.setState({exam: studentTestExam})
+                                    localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
                                     console.log('sama')
                                 } else { // true check
                                     (async () => {
@@ -222,16 +328,22 @@ export class Exam extends Component {
                                                 question_choice_id: idChoice,
                                                 _method:'PUT'
                                             }
-                                            const url = `https://vps.carakde.id/api_alfatih/api/student/test/answer/${exam.id}`
+                                            
+                                            const url = `http://157.230.33.225/api_alfatih/api/student/test/answer/${exam.id}`
                                             let trueCheck = await axios.post(url, data, {headers})
                                             console.log(trueCheck);
                                             
-                                            await this.getExams()
-                                            studentTest[studentTestAnswerIdx].checked = true
+                                            console.log(studentTestExam)
+                                            
                                         } catch(e) {
                                             console.log(e);
                                         }
+                                        
                                     })()
+                                    studentTest[studentTestAnswerIdx].checked = true
+                                    studentTest[studentTestAnswerIdx].question_choice_id = studentChoice[index2].id
+                                    this.setState({exam: studentTestExam})
+                                    localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
                                     console.log('beda')
                                 }
                                 // console.log(studentTest[studentTestAnswerIdx].checked);
@@ -260,13 +372,13 @@ export class Exam extends Component {
         };
 
     const renderPageNumbers = pageNumbers.map((number, i) => {
-        console.log('check validity', exam.student_test_answers[i])
+        // console.log('check validity', exam.student_test_answers[i])
         return (
             <PaginationItem 
                 className={currentPage === number ? 'active' : ''} 
                 key={number}>
                 <PaginationLink 
-                    style={exam.student_test_answers[i].checked ? {background : "#18d19f", color: '#fff' } : {background: "white", color: '#007bff'} } 
+                    style={exam.student_test_answers[i].checked === true ? {background : "#18d19f", color: '#fff' } : {background: "white", color: '#007bff'} } 
                     id={number} 
                     onClick={this.handleClick}
                 >
@@ -277,36 +389,62 @@ export class Exam extends Component {
     })
     
     return (
+        this.state.exam ? 
       <React.Fragment>
         {/* <Header /> */}
         <Container className="mt-5 pt-5">
             <Row>
+            <Modal isOpen={this.state.modal}>
+                <ModalBody>
+                    <div className="text-center">
+                        <img src={successRegister} alt="imageBook" className="imgIconAuth" />
+                        <h1>Waktu Habis</h1>
+                        <p className="mt-2 text-muted">Waktu pengerjaan soal telah habis</p>
+                        <Button className="mt-3 btn btn-lg btn-primary" color="primary" 
+                        onClick={() => {
+                            // this.toggle()
+                            window.location = '/'
+                        }}>Login</Button>
+                    </div>
+                </ModalBody>
+            </Modal>
                 <Col>
                     {renderExams}
                     <div className="text-center mb-3 mt-3">
                         <Button color="secondary"
-                            size="md" className={currentPage === 1 ? 'd-none' : ''}
+                            size="md" className={currentPage === 1 ? 'd-none' : 'mt-2 mb-2'}
                             onClick={() => this.setState({currentPage: currentPage - 1})}>
                             <FontAwesomeIcon icon={faChevronLeft} color="white" size="1x"/> Soal Sebelumnya
                         </Button>{' '}
                         <Button color="primary"
-                            size="md" className={currentPage === last(pageNumbers) ? 'd-none' : ''}
+                            size="md" className={currentPage === last(pageNumbers) ? 'd-none' : 'mt-2 mb-2'}
                             onClick={() => this.setState({currentPage: currentPage + 1})}>
                             Soal Selanjutnya <FontAwesomeIcon icon={faChevronRight} color="white" size="1x"/>
                         </Button>
                         <Button color="success"
-                            size="md" className={currentPage === last(pageNumbers) ? '' : 'd-none'}
-                            >
-                            Submit Jawaban <FontAwesomeIcon icon={faCheckCircle} color="white" size="1x"/>
+                            size="md" className={currentPage === last(pageNumbers) ? 'mt-2 mb-2' : 'd-none'}
+                            onClick={() => {
+                                this.setState({alert: getAlertConfirmation()})
+                            }}>
+                            Submit <FontAwesomeIcon icon={faCheckCircle} color="white" size="1x"/>
+                        </Button> {' '}
+                        <Button color="success"
+                            size="md" className={currentPage === last(pageNumbers) ? 'd-none' : 'mt-2 mb-2'}
+                            onClick={() => {
+                                this.setState({alert: getAlertConfirmation()})
+                            }}>
+                            Submit <FontAwesomeIcon icon={faCheckCircle} color="white" size="1x"/>
                         </Button> {' '}
                     </div>
-                    <Pagination className="navs">
+                    <Pagination size="lg" className="navs">
                         {renderPageNumbers}
                     </Pagination>
                 </Col>
             </Row>
+            {this.state.alert}
         </Container>
       </React.Fragment>
+      : null
     )
   }
 }

@@ -22,24 +22,48 @@ export class Header extends Component {
     });
   }
   render() {
-    return (
-      <React.Fragment>
-        <Navbar fixed="top" className="bg-primary" dark expand="md">
-            <Container>
-            <Sidebar pageWrapId={ "container" } />
-            <NavbarBrand href="/">Al Fatih College</NavbarBrand>
-               
-                    <Nav navbar>
-                        <NavItem>
-                            <NavLink onClick={this.props.handleLogOut} href="#">Logout</NavLink>
-                        </NavItem>
-                    </Nav>
-                    
-            </Container>
-        </Navbar>
-        {/* <div className="mb-5 pb-5" /> */}
-      </React.Fragment>
-    )
+    if(this.props.location.pathname === '/exam') {
+      return (
+        <React.Fragment>
+          <Navbar fixed="top" className="bg-primary" dark expand="md">
+              <Container>
+              <NavbarBrand href="#"
+              onClick={() => this.props.history.push('/')}>
+                Al Fatih College
+              </NavbarBrand>
+                
+                      <Nav navbar>
+                          <NavItem>
+                              <NavLink onClick={this.props.handleLogOut} href="#">Logout</NavLink>
+                          </NavItem>
+                      </Nav>
+                      
+              </Container>
+          </Navbar>
+        </React.Fragment>
+      )
+    } else {
+      return (
+        <React.Fragment>
+          <Navbar fixed="top" className="bg-primary" dark expand="md">
+              <Container>
+              <Sidebar pageWrapId={ "container" } />
+              <NavbarBrand href="#"
+              onClick={() => this.props.history.push('/')}>
+                Al Fatih College
+              </NavbarBrand>
+                 
+                      <Nav navbar>
+                          <NavItem>
+                              <NavLink onClick={this.props.handleLogOut} href="#">Logout</NavLink>
+                          </NavItem>
+                      </Nav>
+                      
+              </Container>
+          </Navbar>
+        </React.Fragment>
+      )
+    }
   }
 }
 

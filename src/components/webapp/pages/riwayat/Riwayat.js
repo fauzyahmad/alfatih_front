@@ -9,7 +9,7 @@ import {
     Card} from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp} from '@fortawesome/free-solid-svg-icons'
-import Header from '../../layout/Header'
+// import Header from '../../layout/Header'
 import Panel from '../../layout/Panel'
 import './Riwayat.css'
 

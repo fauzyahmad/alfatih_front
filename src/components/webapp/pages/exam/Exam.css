@@ -5,6 +5,18 @@
     -webkit-overflow-scrolling: touch;
 }
 
+.card {
+ box-shadow: 0.5rem .7rem 2rem rgba(0,0,0,.175)!important; 
+ transition: all 0.5s!important;
+ border: 0;
+ border-radius: 0.25rem;
+} 
+
+.card:hover {
+ box-shadow: 0.5rem .2rem .6rem rgba(0,0,0,.15)!important;
+ cursor: pointer;
+}
+
 input[type="radio"]:checked+label {
     /* color: #fff; */
     border: linear-gradient(160deg,#02ccba,#2f339c);
@@ -20,4 +32,31 @@ input[type="radio"]:checked+label {
 
 .border-exam {
     border: 3px solid #15da96;
+}
+
+.fade-in {
+	opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: .2s;
+}
+
+.question-choices {
+    display: flex!important;
+    align-items: flex-end!important;
+}
+
+.answer {
+    border: 1px solid #1ccc9f!important;
+}
+
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }

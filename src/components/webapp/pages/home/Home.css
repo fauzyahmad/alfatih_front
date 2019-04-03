@@ -6,7 +6,19 @@
 } 
 
 .card:hover {
- box-shadow: 0.5rem .2rem .7rem rgba(0,0,0,.15)!important;
+ box-shadow: 0.5rem .2rem .6rem rgba(0,0,0,.15)!important;
  cursor: pointer;
+}
+
+.text-transparent {
+    color: transparent!important
+}
+
+.content-group a {
+    color: #6c757d !important
+}
+
+.content-group a:hover {
+    color: #4c4d4e !important
 }
 

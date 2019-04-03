@@ -4,9 +4,51 @@ import {
     Col, 
     } from 'reactstrap'
 import './Panel.css'
+import axios from "axios";
+
+const defaultProps = {
+  baseUrl: 'http://157.230.33.225/api_alfatih/api'
+}
 
 export class Panel extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            leaderboard: ''
+        }
+    }
+
+    componentWillMount() {
+        let leaderStorage = localStorage.getItem(`leaderboard`)
+        if(leaderStorage !== null) {
+            this.setState({leaderboard: JSON.parse(localStorage.getItem(`leaderboard`))})
+            return
+        } 
+        this.getLeaderboard()
+        
+    }
+
+    getLeaderboard = async () => {
+        try{
+            const headers = {
+                'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                'Content-Type': 'application/json'
+            }
+            // const url = `https://vps.carakde.id/api_alfatih/api/
+            // ${localStorage.getItem('studentTest_id')}/leader_board`
+            // console.log(url)
+            let resLeaderboad = await axios.get(`${this.props.baseUrl}/student/test/
+            ${localStorage.getItem('studentTest_id')}/leader_board`, {headers})
+            let stateRes = await resLeaderboad
+            localStorage.setItem('leaderboard', JSON.stringify(stateRes))
+            this.setState({leaderboard: stateRes})
+            console.log(this.state.leaderboard)
+        } catch(e) {
+
+        }
+    }
   render() {
+    const numLeader = this.state.leaderboard.packetLeaderBoard.length 
     return (
       <React.Fragment>
         <div className="leaderboard">
@@ -15,25 +57,44 @@ export class Panel extends Component {
                     style={{fontWeight: '700'}}>
                     Leaderboard
                 </h5>
-                <div className="image-board text-center">
-                    <img alt="leaderboard text-center"
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
-                    className="rounded-circle" width="100"
-                    />
-                </div>
+                <Row className="image-board">
+                    <Col xs="4" className="text-left line-height">
+                        <small className="text-white text-smalls">Peringkat kamu</small>
+                        <h5 className="text-white">{this.state.leaderboard.studentLeaderBoard.rank} 
+                        <small> dari</small><span className="text-warning"> {numLeader} </span> </h5>
+                    </Col>
+                    <Col xs="4" className="text-center">
+                        <img alt="leaderboard"
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
+                        className="rounded-circle text-center" width="80"
+                        />
+                    </Col>
+                </Row>
                 <Row className="mt-3">
-                    <Col xs="6">
+                    {/* <Col xs="4">
                         <small className="text-white">Peringkat kamu</small>
                         <h5 className="text-white">2 
                         <small> dari</small><span className="text-warning"> 200</span> </h5>
+                    </Col> */}
+                    <Col xs="4" className="text-left">
+                        <small className="text-white text-smalls">
+                            Skor {this.state.leaderboard.scores.questionGroupScores[0].student_test_question_group.question_group.category.name}
+                        </small>
+                        <h5 className="text-white">{this.state.leaderboard.scores.questionGroupScores[0].score === null ? '0' : this.state.leaderboard.scores.questionGroupScores[0].score}</h5>
+                    </Col>
+                    <Col xs="4" className="text-left">
+                        <small className="text-white text-smalls">
+                            Skor {this.state.leaderboard.scores.questionGroupScores[1].student_test_question_group.question_group.category.name}
+                        </small>
+                        <h5 className="text-white text-center">{this.state.leaderboard.scores.questionGroupScores[1].score === null ? '0' : this.state.leaderboard.scores.questionGroupScores[1].score}</h5>
                     </Col>
                     {/* <Col xs="4" className="text-center">
                         <small>Posisi</small>
                         <p>1st</p>
                     </Col> */}
-                    <Col xs="6" className="text-right">
-                        <small className="text-white">Total Skor</small>
-                        <h5 className="text-white">910</h5>
+                    <Col xs="4" className="text-right">
+                        <small className="text-white text-smalls">Total Skor</small>
+                        <h5 className="text-white">{this.state.leaderboard.scores.sumScore}</h5>
                     </Col>
                 </Row>
             </div>
@@ -49,59 +110,31 @@ export class Panel extends Component {
                         <small className="text-muted">Skor</small>
                     </Col>
                 </Row> */}
-                <Row className="middle-div">
-                    <Col xs="2" >
-                        <h6 className="middle-div">1</h6>
-                    </Col>
-                    <Col xs="7" className="text-left">
-                        <p className="middle-div">
-                            <img alt="leaderboard text-center"
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
-                            className="rounded-circle" width="30"
-                            /> Andi Ahmad Fauzy
-                        </p>
-                    </Col>
-                    <Col xs="3" className="text-right">
-                        <h6 className="middle-div">975</h6>
-                    </Col>
-                </Row>
-                <Row className="middle-div user-bg">
-                    <Col xs="2" >
-                        <h6 className="middle-div text-white">2</h6>
-                    </Col>
-                    <Col xs="7" className="text-left">
-                        <p className="middle-div text-white">
-                            <img alt="leaderboard text-center"
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
-                            className="rounded-circle" width="30"
-                            /> Andi Mubarak
-                        </p>
-                    </Col>
-                    <Col xs="3" className="text-right">
-                        <h6 className="middle-div text-white">910</h6>
-                    </Col>
-                </Row>
-                <Row className="middle-div">
-                    <Col xs="2" >
-                        <h6 className="middle-div">3</h6>
-                    </Col>
-                    <Col xs="7" className="text-left">
-                        <p className="middle-div">
-                            <img alt="leaderboard text-center"
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
-                            className="rounded-circle" width="30"
-                            /> Sri Muliyanti P.
-                        </p>
-                    </Col>
-                    <Col xs="3" className="text-right">
-                        <h6 className="middle-div">875</h6>
-                    </Col>
-                </Row>
+                {this.state.leaderboard.packetLeaderBoard.map((leader, idx) => 
+                    <Row className="middle-div" key={idx}>
+                        <Col xs="2" >
+                            <h6 className="middle-div">{idx+1}</h6>
+                        </Col>
+                        <Col xs="7" className="text-left">
+                            <p className="middle-div">
+                                <img alt="leaderboard text-center"
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
+                                className="rounded-circle" width="30"
+                                /> {leader.name}
+                            </p>
+                        </Col>
+                        <Col xs="3" className="text-right">
+                            <h6 className="middle-div">{leader.sumScore === null ? '0' : leader.sumScore}</h6>
+                        </Col>
+                    </Row>
+                )}
             </div>
         </div> 
       </React.Fragment>
     )
   }
 }
+
+Panel.defaultProps = defaultProps
 
 export default Panel

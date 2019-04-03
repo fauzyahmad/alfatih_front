@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import './Sidebar.css'
+import logoImage from '../../image/logo.png'
 
 export class Sidebar extends Component {
     constructor (props) {
@@ -32,12 +33,15 @@ export class Sidebar extends Component {
     }
     render () {
         return (
-          <div>
             <Menu 
               isOpen={this.state.menuOpen}
               onStateChange={(state) => this.handleStateChange(state)}
             >
-              <Link className="hover-side text-center p-2" to='/' onClick={() => this.closeMenu()}>
+              <img width="40%" 
+                className="shadow-img d-table m-auto rounded-circle text-center" 
+                alt="logo-alfatih" src={logoImage} 
+              />
+              <Link className="hover-side text-center p-2 mt-3" to='/' onClick={() => this.closeMenu()}>
                 <div style={{display: '-webkit-inline-box'}}>
                   <h5 className="mr-2 text-light" style={{marginTop: '.42rem'}}>Beranda</h5>
                   <FontAwesomeIcon
@@ -45,16 +49,15 @@ export class Sidebar extends Component {
                     size="1x" className="mt-2" color="#fff"/>
                 </div>
               </Link>
-              <Link className="hover-side text-center p-2" to='/riwayat' onClick={() => this.closeMenu()}>
+              {/* <Link className="hover-side text-center p-2" to='/riwayat' onClick={() => this.closeMenu()}>
               <div style={{display: '-webkit-inline-box'}}>
                   <h5 className="mr-2 text-light" style={{marginTop: '.42rem'}}>Riwayat</h5>
                   <FontAwesomeIcon
                     icon={faChevronRight} 
                     size="1x" className="mt-2" color="#fff"/>
                 </div>
-              </Link>
+              </Link> */}
             </Menu>
-          </div>
         )
       }
 }
