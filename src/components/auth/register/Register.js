@@ -28,7 +28,8 @@ export class Register extends Component {
         birth_date: '',
         password: '',
         confirmPassword: '',
-        passwordError: false
+        passwordError: false,
+        type: 'text'
     }
 
     componentDidMount() {
@@ -38,6 +39,14 @@ export class Register extends Component {
         // })
         this.getCities()
         this.getCluster()
+    }
+
+    onFocus = () => {
+        this.setState({type: 'date'})
+    }
+
+    onBlur = () => {
+        this.setState({type: 'text'})
     }
 
     getCities = async () => {
@@ -224,7 +233,9 @@ export class Register extends Component {
                                 
                                 <div className="form-group">
                                     <Input name="birth_date"
-                                        type="date"
+                                        type={this.state.type}
+                                        onFocus={this.onFocus}
+                                        onBlur={this.onBlur}
                                         id="date" 
                                         placeholder="Tanggal Lahir"
                                         value={this.state.birth_date}

@@ -70,13 +70,6 @@ input[type="date"]:valid:before {
   content: "";
 } */
 
-input[type="date"]::before{
-  color: #aaa;
-  content: attr(placeholder) ": ";
-}
-input[type="date"]:focus::before {
-  content: "" !important;
-}
 
 .border-green {
   border-color: #28a745!important
