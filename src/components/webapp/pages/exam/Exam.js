@@ -8,6 +8,7 @@ import {
     PaginationItem, PaginationLink, Pagination, Modal,
     ModalBody
     } from 'reactstrap'
+import parser from 'html-react-parser';
 // import Header from '../../layout/Header'
 // import Paginations from './Paginations'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -20,7 +21,7 @@ import successRegister from '../../../image/verified.svg'
 // import PropTypes from 'prop-types';
 // import { throws } from 'assert';
 const defaultProps = {
-   baseUrl: 'http://157.230.33.225/api_alfatih/api'
+   baseUrl: 'https://api.alfatihcollege.com/api'
 }
 
 export class Exam extends Component {
@@ -79,7 +80,7 @@ export class Exam extends Component {
                 // document.getElementById("demo").innerHTML = "EXPIRED";
                 localStorage.removeItem('count')
                 console.log('waktu habis')
-                this.finishExam()
+                this.toggle()
                 return
             }
             }, 1000)
@@ -95,7 +96,7 @@ export class Exam extends Component {
             'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
             'Content-Type': 'application/json'
         }
-        let responseExams = await axios.get(`http://157.230.33.225/api_alfatih/api/student/test/question_group/
+        let responseExams = await axios.get(`https://api.alfatihcollege.com/api/student/test/question_group/
         ${localStorage.getItem('studentTestQuestion')}`, {headers})
           let response = responseExams.data.studentTestQuestionGroup
           this.setState({exam: response})
@@ -122,7 +123,7 @@ export class Exam extends Component {
         on_progress:0,
         completed: 1
       }
-      const url = `http://157.230.33.225/api_alfatih/api/student/test/question_group/
+      const url = `https://api.alfatihcollege.com/api/student/test/question_group/
       ${localStorage.getItem('studentTestQuestion')}/update`
       let resStartExam = await axios.post(url, data, {headers})
       console.log(resStartExam)
@@ -139,6 +140,8 @@ export class Exam extends Component {
       // reset page if exam array has changed
     //   this.getExams()
     this.countDownTime(this) 
+
+    
     // this.forceUpdate()
     
   }
@@ -179,6 +182,17 @@ export class Exam extends Component {
     }
   
   render() {
+    window.onbeforeunload = function (e) {
+        var e = e || window.event;
+      
+        //IE & Firefox
+        if (e) {
+          e.returnValue = 'Are you sure?';
+        }
+      
+        // For Safari
+        return 'Are you sure?';
+      };
     const getAlertSubmitted = () => (
         <SweetAlert
             success
@@ -187,7 +201,8 @@ export class Exam extends Component {
             title="Selamat"
             // cancelBtnBsStyle="default"
             onConfirm={() => {
-                this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
+                // this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
+                window.location = '/#/'
             }}
             // onCancel={this.hideAlert}
             >
@@ -217,7 +232,7 @@ export class Exam extends Component {
                         on_progress:0,
                         completed: 1
                       }
-                      const url = `http://157.230.33.225/api_alfatih/api/student/test/question_group/
+                      const url = `https://api.alfatihcollege.com/api/student/test/question_group/
                       ${localStorage.getItem('studentTestQuestion')}/update`
                       let resStartExam = await axios.post(url, data, {headers})
                       console.log(resStartExam)
@@ -260,97 +275,100 @@ export class Exam extends Component {
                 </h6>
             </CardHeader>
             <CardBody>
-                <h5>{exam.question.number}. {exam.question.text}</h5>
+            {/* {exam.question.number}. */}
+                <h5>{parser(`${exam.question.text}`)}</h5>
                 {exam.question.choices.map(choice => 
-                    <div
-                        className={exam.question_choice_id === choice.id ? 
-                            'p-3 fade-in question-choices answer' : 'p-3 question-choices'}
-                        key={choice.id}
-                    >
-                        <FontAwesomeIcon
-                            icon={exam.question_choice_id === choice.id ? faCheckCircle : faCircle} 
-                            size="2x" 
-                            color={exam.question_choice_id === choice.id ? "#1cd39d" : "black"}
-                            className={exam.question_choice_id === choice.id ? "fade-in mr-3" : "mr-3"}
-                            key={choice.id}
-                            id={choice.id} 
-                            name={exam.id}
-                            onClick={e => {
-                                var studentTestExam = this.state.exam
-                                var studentTestAnswerIdx = this.state.exam.student_test_answers.findIndex(arr =>
-                                        arr.id === exam.id
+                    <div key={choice.id} className="container-choice">
+                            <div
+                            className={exam.question_choice_id === choice.id ? 
+                                'p-3 fade-in question-choices answer choice-width' : 'p-3 question-choices choice-width'}
+                            
+                            >
+                            <FontAwesomeIcon
+                                icon={exam.question_choice_id === choice.id ? faCheckCircle : faCircle} 
+                                size="2x" 
+                                color={exam.question_choice_id === choice.id ? "#1cd39d" : "black"}
+                                className={exam.question_choice_id === choice.id ? "fade-in mr-3" : "mr-3"}
+                                key={choice.id}
+                                id={choice.id} 
+                                name={exam.id}
+                                onClick={e => {
+                                    var studentTestExam = this.state.exam
+                                    var studentTestAnswerIdx = this.state.exam.student_test_answers.findIndex(arr =>
+                                            arr.id === exam.id
+                                        )
+                                    var studentTest = this.state.exam.student_test_answers
+                                    console.log(studentTest[studentTestAnswerIdx].question_choice_id)
+                                    var question_choice_id = studentTest[studentTestAnswerIdx].question_choice_id
+                                    var index2 = studentTest[studentTestAnswerIdx].question.choices.findIndex(arr => 
+                                        arr.id === choice.id
                                     )
-                                var studentTest = this.state.exam.student_test_answers
-                                console.log(studentTest[studentTestAnswerIdx].question_choice_id)
-                                var question_choice_id = studentTest[studentTestAnswerIdx].question_choice_id
-                                var index2 = studentTest[studentTestAnswerIdx].question.choices.findIndex(arr => 
-                                    arr.id === choice.id
-                                )
-                                var studentChoice = studentTest[studentTestAnswerIdx].question.choices
-                                console.log(studentChoice[index2].id)
-                                var idChoice = studentChoice[index2].id
-                                // studentTest[studentTestAnswerIdx].checked = true
-                                // false check
-                                if(question_choice_id === idChoice) {
-                                    (async () => {
-                                        try {
-                                            const headers = {
-                                                'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
-                                                'Content-Type': 'application/json'
+                                    var studentChoice = studentTest[studentTestAnswerIdx].question.choices
+                                    console.log(studentChoice[index2].id)
+                                    var idChoice = studentChoice[index2].id
+                                    // studentTest[studentTestAnswerIdx].checked = true
+                                    // false check
+                                    if(question_choice_id === idChoice) {
+                                        (async () => {
+                                            try {
+                                                const headers = {
+                                                    'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                                                    'Content-Type': 'application/json'
+                                                }
+                                                const data = {
+                                                    question_choice_id: 0,
+                                                    _method:'PUT'
+                                                }
+                                                const url = `https://api.alfatihcollege.com/api/student/test/answer/${exam.id}`
+                                                let falseCheck = await axios.post(url, data, {headers})
+                                                
+                                                console.log(falseCheck);
+                                                console.log(studentTestExam)
+                                                // this.getExams() 
+                                            } catch(e) {
+                                                console.log(e);
                                             }
-                                            const data = {
-                                                question_choice_id: 0,
-                                                _method:'PUT'
-                                            }
-                                            const url = `http://157.230.33.225/api_alfatih/api/student/test/answer/${exam.id}`
-                                            let falseCheck = await axios.post(url, data, {headers})
-                                            
-                                            console.log(falseCheck);
-                                            console.log(studentTestExam)
-                                            // this.getExams() 
-                                        } catch(e) {
-                                            console.log(e);
-                                        }
-                                    })()
-                                    studentTest[studentTestAnswerIdx].question_choice_id = 0
-                                    studentTest[studentTestAnswerIdx].checked = false 
-                                    this.setState({exam: studentTestExam})
-                                    localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
-                                    console.log('sama')
-                                } else { // true check
-                                    (async () => {
-                                        try {
-                                            const headers = {
-                                                'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
-                                                'Content-Type': 'application/json'
-                                            }
-                                            const data = {
-                                                question_choice_id: idChoice,
-                                                _method:'PUT'
+                                        })()
+                                        studentTest[studentTestAnswerIdx].question_choice_id = 0
+                                        studentTest[studentTestAnswerIdx].checked = false 
+                                        this.setState({exam: studentTestExam})
+                                        localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
+                                        console.log('sama')
+                                    } else { // true check
+                                        (async () => {
+                                            try {
+                                                const headers = {
+                                                    'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                                                    'Content-Type': 'application/json'
+                                                }
+                                                const data = {
+                                                    question_choice_id: idChoice,
+                                                    _method:'PUT'
+                                                }
+                                                
+                                                const url = `https://api.alfatihcollege.com/api/student/test/answer/${exam.id}`
+                                                let trueCheck = await axios.post(url, data, {headers})
+                                                console.log(trueCheck);
+                                                
+                                                console.log(studentTestExam)
+                                                
+                                            } catch(e) {
+                                                console.log(e);
                                             }
                                             
-                                            const url = `http://157.230.33.225/api_alfatih/api/student/test/answer/${exam.id}`
-                                            let trueCheck = await axios.post(url, data, {headers})
-                                            console.log(trueCheck);
-                                            
-                                            console.log(studentTestExam)
-                                            
-                                        } catch(e) {
-                                            console.log(e);
-                                        }
-                                        
-                                    })()
-                                    studentTest[studentTestAnswerIdx].checked = true
-                                    studentTest[studentTestAnswerIdx].question_choice_id = studentChoice[index2].id
-                                    this.setState({exam: studentTestExam})
-                                    localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
-                                    console.log('beda')
-                                }
-                                // console.log(studentTest[studentTestAnswerIdx].checked);
-                                
-                            }}
-                        />
-                        <h6 name={exam.id}>{choice.text}</h6>
+                                        })()
+                                        studentTest[studentTestAnswerIdx].checked = true
+                                        studentTest[studentTestAnswerIdx].question_choice_id = studentChoice[index2].id
+                                        this.setState({exam: studentTestExam})
+                                        localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
+                                        console.log('beda')
+                                    }
+                                    // console.log(studentTest[studentTestAnswerIdx].checked);
+                                    
+                                }}
+                            />
+                            {parser(`${choice.text}`)}
+                        </div>
                     </div>
                 )}
             </CardBody>
@@ -403,8 +421,8 @@ export class Exam extends Component {
                         <Button className="mt-3 btn btn-lg btn-primary" color="primary" 
                         onClick={() => {
                             // this.toggle()
-                            window.location = '/'
-                        }}>Login</Button>
+                            window.location = '/#/'
+                        }}>OK</Button>
                     </div>
                 </ModalBody>
             </Modal>

@@ -42,7 +42,7 @@ export class Register extends Component {
 
     getCities = async () => {
         try {
-            let resCities = await axios.get(`https://vps.carakde.id/api_alfatih/api/getCityOptions`)
+            let resCities = await axios.get(`https://api.alfatihcollege.com/api/getCityOptions`)
             // console.log(resCities)
             let citiesMap = await resCities.data.cities
             let stateCities = citiesMap.map(cities => ({
@@ -57,7 +57,7 @@ export class Register extends Component {
 
     getCluster = async () => {
         try {
-            let resCluster = await axios.get(`https://vps.carakde.id/api_alfatih/api/cluster`)
+            let resCluster = await axios.get(`https://api.alfatihcollege.com/api/cluster`)
             let stateCluster = await resCluster.data.clusters.data
             this.setState({cluster: [...stateCluster]})
         } catch(e) {
@@ -68,7 +68,7 @@ export class Register extends Component {
     getSchool = async () => {
         try {
             console.log('kode_kab_kota', this.state.kode_kab_kota)
-            let resSchools = await axios.get(`https://vps.carakde.id/api_alfatih/api/getSchoolOptions?kode_kab_kota=${this.state.kode_kab_kota}`)
+            let resSchools = await axios.get(`https://api.alfatihcollege.com/api/getSchoolOptions?kode_kab_kota=${this.state.kode_kab_kota}`)
             let schoolsMap = await resSchools.data.schools
             let stateSchools = schoolsMap.map(schools => ({
                 value: schools.id,
@@ -87,7 +87,7 @@ export class Register extends Component {
         console.log('city yg terpilih', selectedOption)
         let stateKodeKab = await selectedOption.value
         let trimStateKodeKab = await stateKodeKab.trim()
-        let resCities = await axios.get(`https://vps.carakde.id/api_alfatih/api/getCityOptions`)
+        let resCities = await axios.get(`https://api.alfatihcollege.com/api/getCityOptions`)
         let citiesMap = await resCities.data.cities
         let result = citiesMap.filter(cities => {
             return cities.kode_wilayah === stateKodeKab
@@ -334,12 +334,11 @@ export class Register extends Component {
                                     />
                                 </div>
                                 <button
-                                  className={this.props.isLoaded === false ? "btn btn-lg btn-block btn-primary" : "d-none"}
+                                  className={this.props.isLoaded === true ? "d-none" : "btn btn-lg btn-block btn-primary"}
                                   style={{display: 'table', margin: 'auto'}}>
-                                  Masuk
+                                  Daftar
                                 </button>
-                                <button className={this.props.isLoaded === false ? "d-none" : "btn btn-lg btn-block btn-primary"} 
-                                    type="button" 
+                                <button className={this.props.isLoaded === false ? "d-none" : "btn btn-lg btn-block btn-primary"}
                                     disabled style={{display: 'table', margin: 'auto'}}>
                                         <span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                         Loading...

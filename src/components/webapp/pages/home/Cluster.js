@@ -21,7 +21,7 @@ import pMinDelay from 'p-min-delay'
 
 // const Panel = loadable(() => import('../../layout/Panel'))
 const defaultProps = {
-  baseUrl: 'http://157.230.33.225/api_alfatih/api'
+  baseUrl: 'https://api.alfatihcollege.com/api'
 }
 export class Cluster extends Component {
   constructor(props) {
@@ -93,7 +93,7 @@ export class Cluster extends Component {
         on_progress:1,
         start_datetime: this.timeNow()
       }
-      const url = `http://157.230.33.225/api_alfatih/api/student/test/question_group/
+      const url = `https://api.alfatihcollege.com/api/student/test/question_group/
       ${localStorage.getItem('studentTestQuestion')}/update`
       let resStartExam = await axios.post(url, data, {headers})
       console.log(resStartExam)
@@ -109,13 +109,13 @@ export class Cluster extends Component {
       'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
       'Content-Type': 'application/json'
     }
-    let responseExams = await axios.get(`http://157.230.33.225/api_alfatih/api/student/test/question_group/
+    let responseExams = await axios.get(`https://api.alfatihcollege.com/api/student/test/question_group/
     ${localStorage.getItem('studentTestQuestion')}`, {headers})
     let response = responseExams.data.studentTestQuestionGroup
     localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(response))
     console.log(response)
     this.setState({isLoaded: false})
-    window.location = '/exam'
+    window.location = '/#/exam'
     // this.props.history.push('/exam')
     // console.log(response)
   }
@@ -207,13 +207,18 @@ export class Cluster extends Component {
                                             // window.location.href ='/exam'
                                           }
                                           }>
-                                          <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
+                                          <div className={cluster.completed === 0 ? "float-right mt-3" : "d-none"} 
+                                          style={{display: '-webkit-inline-box'}}>
                                               <h5 style={cluster.completed === 1 ? {color: 'transparent!important'}: {color: '#6c757d !important'}}
                                               className={cluster.completed === 1 ? 'text-transparent mt-2 mr-2' : 'mt-2 mr-2'}>{cluster.on_progress === 0 && cluster.start_datetime === null ? 'Pilih Soal' : 'Lanjutkan'}</h5>
                                               <FontAwesomeIcon
                                               icon={faChevronRight} 
                                               size="2x" className={cluster.completed === 1 ? 'text-transparent mt-1' : 'mt-1'} 
                                               color={cluster.completed === 1 ? {color: 'transparent!important'}: {color: '#6c757d !important'}}/>
+                                          </div>
+                                          <div className={cluster.completed === 1 ? "float-right mt-3" : "d-none"}
+                                          style={{display: '-webkit-inline-box'}}>
+                                            <h5 className="mt-2 mr-2 text-success">Selesai</h5>
                                           </div>
                                           </Link>
                                           

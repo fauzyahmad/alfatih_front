@@ -2,7 +2,7 @@ import React from 'react';
 import loadable from '@loadable/component'
 import { render } from "react-dom";
 import { Modal, Button, ModalBody } from 'reactstrap'
-import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
+import { HashRouter, Route, Switch, withRouter } from "react-router-dom";
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import loginFailed from './components/image/cancel.svg'
@@ -46,9 +46,11 @@ class App extends React.Component {
             user: {},
             isLoaded: false,
             modal: false,
+            modalEmailExist: false,
             backdrop: 'static'
         }
         this.toggle = this.toggle.bind(this);
+        this.toggleEmail = this.toggleEmail.bind(this);
     }
 
     toggle() {
@@ -57,11 +59,17 @@ class App extends React.Component {
         }));
       }
 
+      toggleEmail() {
+        this.setState(prevState => ({
+          modalEmailExist: !prevState.modalEmailExist
+        }));
+      }
+
         handleSubmitLogin = async (e, formData, inputs) => {
             e.preventDefault();
             try {
                 this.setState({isLoaded: true})
-                let login = await axios.post('http://157.230.33.225/api_alfatih/api/auth/login', formData)
+                let login = await axios.post('https://api.alfatihcollege.com/api/auth/login', formData)
                 // console.log(login.data)
                 localStorage.setItem('access_token', login.data.access_token)
                 localStorage.setItem('isLoggedIn', true)
@@ -82,18 +90,25 @@ class App extends React.Component {
         }
 
         handleSubmitRegister = async (e, formData, inputs) => {
-            this.setState({isLoaded: true})
             e.preventDefault();
             try {
-                let register = await axios.post('http://157.230.33.225/api_alfatih/api/student/registration', formData)
-                console.log(register)
-                this.toggle()
-                this.setState({isLoaded: false})
+                this.setState({isLoaded: true})
+                let emailCheck = await axios.get(`https://api.alfatihcollege.com/api/checkIfEmailExist?email=${formData.email}`)
+                console.log('check email', emailCheck.data)
+                if(emailCheck.data.exist === 0) {
+                    let register = await axios.post('https://api.alfatihcollege.com/api/student/registration', formData)
+                    console.log(register)
+                    this.toggle()
+                    this.setState({isLoaded: false})
+                } else {
+                    this.toggleEmail()
+                    this.setState({isLoaded: false})
+                }          
             } catch(e) {
                 console.log(e)
                 this.setState({isLoaded: false})
             }
-            // alert(JSON.stringify(formData, null, 2));
+            // console.log(formData);
         }
 
         handleErrorSubmit = (e,formData, errorInputs) => {
@@ -106,7 +121,7 @@ class App extends React.Component {
                 isLoggedIn: false,
                 user: {}
             })
-            window.location = '/login'
+            window.location.reload()
         }
 
         componentWillMount() {
@@ -222,6 +237,16 @@ class App extends React.Component {
                                             </div>
                                         </ModalBody>
                                     </Modal>
+                                    <Modal isOpen={this.state.modalEmailExist}>
+                                    <ModalBody>
+                                        <div className="text-center">
+                                        <img src={loginFailed} alt="imageBook" className="imgIconAuth" />
+                                            <h1>Maaf</h1>
+                                            <p className="mt-2 text-muted">Email kamu sudah terdaftar, coba daftar dengan email yang lain</p>
+                                            <Button className="mt-3 btn btn-lg btn-primary" color="primary" onClick={this.toggleEmail}>OK</Button>
+                                        </div>
+                                    </ModalBody>
+                                </Modal>
                                 </>
                             )}
                         />
@@ -279,9 +304,9 @@ const AppContainer = withRouter(props => <App {...props} />);
 
 
 render(
-    <BrowserRouter>
+    <HashRouter>
       <AppContainer />
-    </BrowserRouter>,
+    </HashRouter>,
   
     document.getElementById("root")
   );

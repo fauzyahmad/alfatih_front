@@ -4,7 +4,7 @@ import {
   Container, 
   Row, 
   Col, 
-  Card } from 'reactstrap'
+  Card, Modal, ModalBody, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
@@ -12,12 +12,13 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 import bookImg from '../image/book.svg'
 import './pages/home/Home.css'
+import loginFailed from '../image/cancel.svg'
 // import SweetAlert from 'sweetalert-react'; // eslint-disable-line import/no-extraneous-dependencies
 // import 'sweetalert/dist/sweetalert.css';
 // import PropTypes from 'prop-types';
 // import Daftar from './pages/daftar/Daftar';
 const defaultProps = {
-   baseUrl: 'http://157.230.33.225/api_alfatih/api'
+   baseUrl: 'https://api.alfatihcollege.com/api'
 }
 export class WebApp extends Component {
   constructor(props) {
@@ -25,8 +26,17 @@ export class WebApp extends Component {
       this.state = {
           pakets: [],
           show: false,
-          isLoaded: false
+          isLoaded: false,
+          modal: false,
+          backdrop: 'static'
       }
+      this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
   }
 
   componentDidMount() {
@@ -52,8 +62,9 @@ componentDidUpdate(prevProps) {
   }
 
   getPacket = async () => {
-    this.setState({isLoaded: true})
+    
       try{
+        this.setState({isLoaded: true})
         const headers = {
             'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
             'Content-Type': 'application/json'
@@ -64,10 +75,12 @@ componentDidUpdate(prevProps) {
         this.setState({isLoaded: false})
         if(resPacket.data.studentPacket.length === 0) {
             // console.log(this.state.pakets.length)
-            this.setState({show: true})
+            this.toggle()
+            // this.setState({isLoaded: false})
         }
         console.log(this.state.pakets)
       } catch(e) {
+        this.setState({isLoaded: false})
         console.log(e)
       }
       
@@ -87,7 +100,8 @@ componentDidUpdate(prevProps) {
         localStorage.setItem('leaderboard', JSON.stringify(resData))
         console.log(resData)
         // this.setState({leaderboard: stateRes})
-        this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
+        // this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
+        window.location = `/#/cluster/${localStorage.getItem('studentTest_id')}`
         // console.log(this.state.leaderboard)
     } catch(e) {
         console.log(e)
@@ -113,9 +127,26 @@ componentDidUpdate(prevProps) {
             /> */}
             
             <Container className="mt-5 pt-5" id="container">
-            <div className={this.state.isLoaded === true ? "loading" : "d-none"}>
-                <div className="loader"></div>
-            </div>
+                <div className={this.state.isLoaded === true ? "loading" : "d-none"}>
+                    <div className="loader"></div>
+                </div>
+                <Modal isOpen={this.state.modal}>
+                    <ModalBody>
+                        <div className="text-center">
+                            <img src={loginFailed} alt="imageBook" className="imgIconAuth" />
+                            <h1>Maaf</h1>
+                            <p className="mt-2 text-muted">Akun kamu belum diverifikasi oleh sistem Kami. Silahkan Login lain waktu</p>
+                            <Button className="mt-3 btn btn-lg btn-primary" color="primary" 
+                            onClick={() => {
+                                localStorage.clear()
+                                this.setState({isLoaded: false})
+                                window.location.reload();
+                            }}>
+                            OK
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                     <Row>
                         <Col sm="12" className="mb-4">
                             <Row>
@@ -152,10 +183,7 @@ componentDidUpdate(prevProps) {
                                                             let postStudentTest = await axios.post(`${this.props.baseUrl}/student_test`, data, {headers})
                                                             console.log(postStudentTest.data)
                                                             localStorage.setItem('studentTest_id', postStudentTest.data.studentTest.id)
-                                                            // this.setState({studentTest_id: postStudentTest.data.studentTest.id})
-                                                            // window.location.href = `/cluster/${paket.packet.id}`
                                                             this.getLeaderboard()
-                                                        //    window.location.href = `/cluster/${localStorage.getItem('studentTest_id')}`
                                                         } catch(e) {
                                                             console.log(e);
                                                             this.setState({isLoaded: false})
