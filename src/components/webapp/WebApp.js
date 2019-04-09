@@ -13,6 +13,8 @@ import axios from 'axios'
 import bookImg from '../image/book.svg'
 import './pages/home/Home.css'
 import loginFailed from '../image/cancel.svg'
+import rocketImg from '../image/rocket-ship.svg'
+import announcementImg from '../image/megaphone.svg'
 // import SweetAlert from 'sweetalert-react'; // eslint-disable-line import/no-extraneous-dependencies
 // import 'sweetalert/dist/sweetalert.css';
 // import PropTypes from 'prop-types';
@@ -26,17 +28,41 @@ export class WebApp extends Component {
       this.state = {
           pakets: [],
           show: false,
+          alert: null,
           isLoaded: false,
           modal: false,
+          modalAnnouncement: false,
+          modalPromotion: false,
           backdrop: 'static'
       }
       this.toggle = this.toggle.bind(this);
+      this.togglePromotion = this.togglePromotion.bind(this);
+      this.toggleAnnouncement = this.toggleAnnouncement.bind(this);
   }
 
   toggle() {
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
+  }
+
+  togglePromotion() {
+    this.setState(prevState => ({
+      modalPromotion: !prevState.modal
+    }));
+  }
+
+  toggleAnnouncement() {
+    this.setState(prevState => ({
+      modalAnnouncement: !prevState.modal
+    }));
+  }
+
+  hideAlert() {
+    console.log('Hiding alert...');
+    this.setState({
+      alert: null
+    });
   }
 
   componentDidMount() {
@@ -52,12 +78,12 @@ export class WebApp extends Component {
       
 //   }
 
-componentDidUpdate(prevProps) {
-    console.log(prevProps)
-}
+// componentDidUpdate(prevProps) {
+//     console.log(prevProps)
+// }
 
   componentWillUnmount() {
-      console.log('componenthome, unmount')
+    //   console.log('componenthome, unmount')
       this.setState({pakets: []})
   }
 
@@ -70,14 +96,21 @@ componentDidUpdate(prevProps) {
             'Content-Type': 'application/json'
         }
         let resPacket = await axios.get(`${this.props.baseUrl}/student/packet`, {headers})
-        console.log(resPacket.data.studentPacket)
+        // console.log(resPacket.data.studentPacket)
         this.setState({pakets: resPacket.data.studentPacket})
         this.setState({isLoaded: false})
         if(resPacket.data.studentPacket.length === 0) {
             // console.log(this.state.pakets.length)
             this.toggle()
             // this.setState({isLoaded: false})
-        }
+        } 
+        // else {
+        //     this.toggleAnnouncement()
+        //     setTimeout(() => { 
+        //         localStorage.clear()
+        //         window.location.reload() 
+        //     }, 5000);
+        // }
         console.log(this.state.pakets)
       } catch(e) {
         this.setState({isLoaded: false})
@@ -98,7 +131,7 @@ componentDidUpdate(prevProps) {
         ${localStorage.getItem('studentTest_id')}/leader_board`, {headers})
         let resData = await resLeaderboad.data
         localStorage.setItem('leaderboard', JSON.stringify(resData))
-        console.log(resData)
+        // console.log(resData)
         // this.setState({leaderboard: stateRes})
         // this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
         window.location = `/#/cluster/${localStorage.getItem('studentTest_id')}`
@@ -109,7 +142,6 @@ componentDidUpdate(prevProps) {
 }
 
   render() {
-    
     return (
         <React.Fragment>
           <div id="web-app">
@@ -147,6 +179,39 @@ componentDidUpdate(prevProps) {
                         </div>
                     </ModalBody>
                 </Modal>
+                <Modal isOpen={this.state.modalAnnouncement}>
+                    <ModalBody>
+                        <div className="text-center">
+                            <img src={announcementImg} alt="imageBook" className="imgIconAuth" />
+                            <h1>PENGUMUMAN</h1>
+                            <p className="mt-2 text-danger">Tryout Akan dilaksanakan pada Tanggal 10 April 2019 Mulai pukul 06.00 WITA - 23.59 WITA.</p>
+                            <p className="text-muted">Login kembali pada saat jadwal Tryout yang telah ditentukan</p>
+                            <Button className="mt-3 btn btn-lg btn-primary" color="primary" 
+                            onClick={() => {
+                                localStorage.clear()
+                                this.setState({isLoaded: false})
+                                window.location.reload();
+                            }}>
+                            OK
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalPromotion}>
+                    <ModalBody>
+                        <div className="text-center">
+                            <img src={rocketImg} alt="imageBook" className="imgIconAuth" />
+                            <h1>COMING SOON</h1>
+                            <p className="mt-2 text-muted">Paket belum tersedia saat ini.</p>
+                            <Button className="mt-3 btn btn-lg btn-primary" color="primary" 
+                            onClick={() => {
+                                this.setState({modalPromotion: false})
+                            }}>
+                            OK
+                            </Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                     <Row>
                         <Col sm="12" className="mb-4">
                             <Row>
@@ -155,17 +220,17 @@ componentDidUpdate(prevProps) {
                                         Daftar Paket
                                     </h1>
                                     <p className="text-center">
-                                        Pilihan paket yang anda punya
+                                        Pilihan paket yang tersedia
                                     </p>
                                 </Col>
                                 {this.state.pakets.map(paket => 
-                                    <Col md="4" className="mb-3" key={paket.id}>
+                                    <Col md="3" className="mb-3" key={paket.id}>
                                         <Card body>
                                             <div style={{display: 'inherit'}}>
                                                 <img src={bookImg} alt="imageBook" className="imgIcon" />
                                                 
-                                                <div className="content-group">
-                                                    <h4>{paket.packet.name}</h4>
+                                                <div className="content-group display-fill">
+                                                    <h5 style={{fontSize: '1.14em'}}>FREE TRYOUT</h5>
                                                     <small style={{color: 'transparent'}}>Berisi soal-soal Saintek</small>
                                                     <Link to="#" 
                                                     id={paket.packet_id}
@@ -181,7 +246,7 @@ componentDidUpdate(prevProps) {
                                                             }
                                                             this.setState({isLoaded: true})
                                                             let postStudentTest = await axios.post(`${this.props.baseUrl}/student_test`, data, {headers})
-                                                            console.log(postStudentTest.data)
+                                                            // console.log(postStudentTest.data)
                                                             localStorage.setItem('studentTest_id', postStudentTest.data.studentTest.id)
                                                             this.getLeaderboard()
                                                         } catch(e) {
@@ -189,7 +254,7 @@ componentDidUpdate(prevProps) {
                                                             this.setState({isLoaded: false})
                                                         }
                                                     }}>
-                                                    <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
+                                                    <div className="float-right mt-2" style={{display: '-webkit-inline-box'}}>
                                                         <h5 className="mt-2 mr-2 text-muted">
                                                             Pilih Paket
                                                         </h5>
@@ -203,6 +268,109 @@ componentDidUpdate(prevProps) {
                                         </Card>
                                     </Col>
                                 )}
+                                    {/* <Col md="3" className="mb-3">
+                                        <Card body>
+                                            <div style={{display: 'inherit'}}>
+                                                <img src={bookImg} alt="imageBook" className="imgIcon" />
+                                                
+                                                <div className="content-group display-fill">
+                                                    <h5>Tryout Free</h5>
+                                                    <small style={{color: 'transparent'}}>Berisi soal-soal Saintek</small>
+                                                    <Link to="#" 
+                                                    id="paket-2"
+                                                    name="paket-2"
+                                                   >
+                                                    <div className="float-right mt-2" style={{display: '-webkit-inline-box'}}>
+                                                        <h5 className="mt-2 mr-2 text-muted">
+                                                            Pilih Paket
+                                                        </h5>
+                                                        <FontAwesomeIcon
+                                                        icon={faChevronRight} 
+                                                        size="2x" className="mt-1" color="#6c757d"/>
+                                                    </div>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col> */}
+                                    <Col md="3" className="mb-3">
+                                        <Card body>
+                                            <div style={{display: 'inherit'}}>
+                                                <img src={bookImg} alt="imageBook" className="imgIcon" />
+                                                
+                                                <div className="content-group display-fill">
+                                                    <h5>1 Paket UTBK</h5>
+                                                    <p className="mb-3 text-danger">Rp 19.500</p>
+                                                    <Link to="#" 
+                                                    id="paket-2"
+                                                    name="paket-2"
+                                                    onClick={(e) => this.togglePromotion()}
+                                                    >
+                                                    <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
+                                                        <h5 className="mt-2 mr-2 text-muted">
+                                                            Beli Paket
+                                                        </h5>
+                                                        <FontAwesomeIcon
+                                                        icon={faChevronRight} 
+                                                        size="2x" className="mt-1" color="#6c757d"/>
+                                                    </div>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                    <Col md="3" className="mb-3">
+                                        <Card body>
+                                            <div style={{display: 'inherit'}}>
+                                                <img src={bookImg} alt="imageBook" className="imgIcon" />
+                                                
+                                                <div className="content-group display-fill">
+                                                    <h5 className="">5 Paket UTBK</h5>
+                                                    <p className="mb-3 text-danger">Rp 95.500</p>
+                                                    <Link to="#" 
+                                                    id="paket-3"
+                                                    name="paket-3"
+                                                    onClick={(e) => this.togglePromotion()}
+                                                   >
+                                                    <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
+                                                        <h5 className="mt-2 mr-2 text-muted">
+                                                            Beli Paket
+                                                        </h5>
+                                                        <FontAwesomeIcon
+                                                        icon={faChevronRight} 
+                                                        size="2x" className="mt-1" color="#6c757d"/>
+                                                    </div>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                    <Col md="3" className="mb-3">
+                                        <Card body>
+                                            <div style={{display: 'inherit'}}>
+                                                <img src={bookImg} alt="imageBook" className="imgIcon" />
+                                                
+                                                <div className="content-group display-fill">
+                                                    <h5 style={{fontSize: '1.1em', marginBottom: '.6em'}}>10 Paket UTBK</h5>
+                                                    <p className="mb-3 text-danger">Rp 179.500</p>
+                                                    <Link to="#" 
+                                                    id="paket-4"
+                                                    name="paket-4"
+                                                    onClick={(e) => this.togglePromotion()}
+                                                   >
+                                                    <div className="float-right mt-3" style={{display: '-webkit-inline-box'}}>
+                                                        <h5 className="mt-2 mr-2 text-muted">
+                                                            Beli Paket
+                                                        </h5>
+                                                        <FontAwesomeIcon
+                                                        icon={faChevronRight} 
+                                                        size="2x" className="mt-1" color="#6c757d"/>
+                                                    </div>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </Col>
                             </Row>
                         </Col>
                         {/* <Col sm="12" md="4" className="d-none">

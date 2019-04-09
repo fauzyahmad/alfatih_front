@@ -29,9 +29,9 @@ html {
   background: transparent;  /* optional: just make scrollbar invisible */
 }
 /* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-  /* background: #FF0000; */
-}
+/* ::-webkit-scrollbar-thumb {
+  background: rgb(1, 142, 167);
+} */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
@@ -50,9 +50,9 @@ input, textarea, select, .css-vj8t7z{
 }
 
 .imgIcon {
-  width: 80px;
-  height: 100px;
-  margin-right: 1em;
+  width: auto;
+  height: 80px;
+  margin-right: 11px;
 }
 
 .imgIconAuth {
@@ -69,6 +69,16 @@ input[type="date"]:focus:before,
 input[type="date"]:valid:before {
   content: "";
 } */
+
+input[type="date"]:before {
+  content: attr(placeholder) !important;
+  color: #aaa;
+  margin-right: 0.1em;
+}
+input[type="date"]:focus:before,
+input[type="date"]:valid:before {
+  content: "";
+}
 
 
 .border-green {
@@ -112,4 +122,8 @@ input[type="date"]:valid:before {
 
 .modal-dialog{
   top: 25vh!important;
+}
+
+.display-fill {
+  width: -webkit-fill-available!important;
 }

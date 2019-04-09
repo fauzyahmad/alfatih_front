@@ -61,7 +61,8 @@ input[type="radio"]:checked+label {
 	}
 }
 
-.container-choice .choice-width {
-    height: 4em!important;
-    line-height: .3em;
+.container-choice .choice-width svg, .container-choice .choice-width p {
+    /* height: 4em!important;
+    line-height: .3em; */
+    height: 2em;
 }

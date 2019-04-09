@@ -45,7 +45,7 @@ export class Cluster extends Component {
   }
 
   componentWillUnmount() {
-    console.log('componentcluster, unmount')
+    // console.log('componentcluster, unmount')
     this.setState({clusters: []})
   }
 
@@ -96,7 +96,7 @@ export class Cluster extends Component {
       const url = `https://api.alfatihcollege.com/api/student/test/question_group/
       ${localStorage.getItem('studentTestQuestion')}/update`
       let resStartExam = await axios.post(url, data, {headers})
-      console.log(resStartExam)
+      // console.log(resStartExam)
       this.getExam()
     } catch(e) {
       console.log(e)
@@ -113,7 +113,7 @@ export class Cluster extends Component {
     ${localStorage.getItem('studentTestQuestion')}`, {headers})
     let response = responseExams.data.studentTestQuestionGroup
     localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(response))
-    console.log(response)
+    // console.log(response)
     this.setState({isLoaded: false})
     window.location = '/#/exam'
     // this.props.history.push('/exam')
@@ -135,7 +135,7 @@ export class Cluster extends Component {
       <SweetAlert 
         info
         showCancel
-        title="Apakah anda siap untuk mulai Tes?"
+        title="Apakah anda siap untuk memulai soal UTBK?"
         confirmBtnText="Ya, Mulai"
         cancelBtnText="Nanti dulu"
         confirmBtnBsStyle="info"
@@ -144,6 +144,7 @@ export class Cluster extends Component {
         allowOutsideClick={true} 
         onConfirm={() => this.startExam()}
       >
+      Waktu(timer) pengerjaan soal akan berjalan setelah kamu menekan tombol Mulai dan tidak dapat dijeda/dihentikan.
       </SweetAlert>
     );
 
@@ -177,7 +178,7 @@ export class Cluster extends Component {
                                 Kluster SBMPTN
                             </h1>
                             <p className="text-center">
-                                Terdapat 2 pilihan untuk Kluster SAINTEK
+                                Ujian Tulis Berbasis Komputer
                             </p>
                         </Col>
                         {this.state.clusters.map(cluster => 
@@ -185,7 +186,7 @@ export class Cluster extends Component {
                               <Card body >
                                   <div style={{display: 'inherit'}}>
                                       <img className="imgIcon" alt="icon-kluster" src={cluster.question_group.category.name === 'TKPA' ? lampImg : 
-                                      (cluster.question_group.category.name === 'SAINTEK' ? chartImg : caseImg)} 
+                                      (cluster.question_group.category.name === 'SAINTEK' ? caseImg : chartImg)} 
                                       color={cluster.question_group.category.name === 'TKPA' ? '#efc738' : 
                                       (cluster.question_group.category.name === 'SAINTEK' ? '#1cd29e' : '#e83737')} size="6x" 
                                       />

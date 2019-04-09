@@ -67,7 +67,7 @@ export class Exam extends Component {
             // console.log('perhitungan count', count-1)
             // localStorage.setItem(`count`, parseInt(localStorage.getItem(`count`)) - 1);
             countDownTime = countDownTime-1
-            console.log('countdown', countDownTime)      
+            // console.log('countdown', countDownTime)      
                 
             var hours = component(countDownTime,      60 * 60) % 24,
                 minutes = component(countDownTime,           60) % 60,
@@ -126,7 +126,7 @@ export class Exam extends Component {
       const url = `https://api.alfatihcollege.com/api/student/test/question_group/
       ${localStorage.getItem('studentTestQuestion')}/update`
       let resStartExam = await axios.post(url, data, {headers})
-      console.log(resStartExam)
+    //   console.log(resStartExam)
       localStorage.removeItem(`exams${localStorage.getItem('studentTestQuestion')}`)
     //   this.setState({alert: this.getAlertSubmitted()})
 
@@ -209,6 +209,23 @@ export class Exam extends Component {
             Kamu telah selesai mengerjakan Soal-soal yang ada
         </SweetAlert>
     )
+    
+    const reloadAlertChoice = () => (
+        <SweetAlert
+            warning
+            confirmBtnText="Reload"
+            confirmBtnBsStyle="info"
+            title="Maaf"
+            // cancelBtnBsStyle="default"
+            onConfirm={() => {
+                // this.props.history.push(`/cluster/${localStorage.getItem('studentTest_id')}`)
+                window.location.reload()
+            }}
+            // onCancel={this.hideAlert}
+            >
+            Mohon periksa kembali koneksimu. Jika sudah, reload halaman ini.
+        </SweetAlert>
+    )
 
     const getAlertConfirmation = (e) => (
         <SweetAlert
@@ -235,7 +252,7 @@ export class Exam extends Component {
                       const url = `https://api.alfatihcollege.com/api/student/test/question_group/
                       ${localStorage.getItem('studentTestQuestion')}/update`
                       let resStartExam = await axios.post(url, data, {headers})
-                      console.log(resStartExam)
+                    //   console.log(resStartExam)
                       localStorage.removeItem(`exams${localStorage.getItem('studentTestQuestion')}`)
                       this.setState({alert: getAlertSubmitted()})
                     //   this.getExam()
@@ -261,10 +278,10 @@ export class Exam extends Component {
     // // console.log(exam)
     // // console.log(JSON.parse(localStorage.getItem('exam')))
     // console.log(exam.student_test_answers)
-    console.log(currentExam);
+    // console.log(currentExam);
 
     const renderExams = currentExam.map((exam, idx) => {
-        console.log(exam);
+        // console.log(exam);
         return <Card key={exam.id}>
             <CardHeader>
                 <h6 className="float-left">Soal {exam.question.number} dari {numExam}</h6>
@@ -298,13 +315,13 @@ export class Exam extends Component {
                                             arr.id === exam.id
                                         )
                                     var studentTest = this.state.exam.student_test_answers
-                                    console.log(studentTest[studentTestAnswerIdx].question_choice_id)
+                                    // console.log(studentTest[studentTestAnswerIdx].question_choice_id)
                                     var question_choice_id = studentTest[studentTestAnswerIdx].question_choice_id
                                     var index2 = studentTest[studentTestAnswerIdx].question.choices.findIndex(arr => 
                                         arr.id === choice.id
                                     )
                                     var studentChoice = studentTest[studentTestAnswerIdx].question.choices
-                                    console.log(studentChoice[index2].id)
+                                    // console.log(studentChoice[index2].id)
                                     var idChoice = studentChoice[index2].id
                                     // studentTest[studentTestAnswerIdx].checked = true
                                     // false check
@@ -321,19 +338,30 @@ export class Exam extends Component {
                                                 }
                                                 const url = `https://api.alfatihcollege.com/api/student/test/answer/${exam.id}`
                                                 let falseCheck = await axios.post(url, data, {headers})
-                                                
-                                                console.log(falseCheck);
-                                                console.log(studentTestExam)
-                                                // this.getExams() 
+                                                localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
                                             } catch(e) {
+                                                const headersCatch = {
+                                                    'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                                                    'Content-Type': 'application/json'
+                                                }
+                                                const dataCatch = {
+                                                    question_choice_id: 0,
+                                                    _method:'PUT'
+                                                }
+                                                const urlCatch = `https://api.alfatihcollege.com/api/student/test/answer/${exam.id}`
                                                 console.log(e);
+                                                axios.post(urlCatch, dataCatch, {headersCatch})
+                                                .then(res => {
+                                                    localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
+                                                })
+                                                .catch(e => {
+                                                    this.setState({alert: reloadAlertChoice()})
+                                                })
                                             }
                                         })()
                                         studentTest[studentTestAnswerIdx].question_choice_id = 0
-                                        studentTest[studentTestAnswerIdx].checked = false 
                                         this.setState({exam: studentTestExam})
-                                        localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
-                                        console.log('sama')
+                                        // console.log('sama')
                                     } else { // true check
                                         (async () => {
                                             try {
@@ -348,20 +376,35 @@ export class Exam extends Component {
                                                 
                                                 const url = `https://api.alfatihcollege.com/api/student/test/answer/${exam.id}`
                                                 let trueCheck = await axios.post(url, data, {headers})
-                                                console.log(trueCheck);
+                                                localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
                                                 
-                                                console.log(studentTestExam)
+                                                // console.log(studentTestExam)
                                                 
                                             } catch(e) {
+                                                const headersCatch = {
+                                                    'Authorization': 'Bearer ' + localStorage.getItem('access_token').toString(),
+                                                    'Content-Type': 'application/json'
+                                                }
+                                                const dataCatch = {
+                                                    question_choice_id: idChoice,
+                                                    _method:'PUT'
+                                                }
+                                                const urlCatch = `https://api.alfatihcollege.com/api/student/test/answer/${exam.id}`
                                                 console.log(e);
+                                                axios.post(urlCatch, dataCatch, {headersCatch})
+                                                .then(res => {
+                                                    localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
+                                                })
+                                                .catch(e => {
+                                                    this.setState({alert: reloadAlertChoice()})
+                                                })
                                             }
                                             
                                         })()
-                                        studentTest[studentTestAnswerIdx].checked = true
+                                        // studentTest[studentTestAnswerIdx].checked = true
                                         studentTest[studentTestAnswerIdx].question_choice_id = studentChoice[index2].id
                                         this.setState({exam: studentTestExam})
-                                        localStorage.setItem(`exams${localStorage.getItem('studentTestQuestion')}`, JSON.stringify(studentTestExam))
-                                        console.log('beda')
+                                        // console.log('beda')
                                     }
                                     // console.log(studentTest[studentTestAnswerIdx].checked);
                                     
@@ -392,17 +435,26 @@ export class Exam extends Component {
     const renderPageNumbers = pageNumbers.map((number, i) => {
         // console.log('check validity', exam.student_test_answers[i])
         return (
-            <PaginationItem 
-                className={currentPage === number ? 'active' : ''} 
-                key={number}>
-                <PaginationLink 
-                    style={exam.student_test_answers[i].checked === true ? {background : "#18d19f", color: '#fff' } : {background: "white", color: '#007bff'} } 
-                    id={number} 
-                    onClick={this.handleClick}
-                >
-                    {number}
-                </PaginationLink>
-            </PaginationItem>
+            // <PaginationItem 
+            //     className={currentPage === number ? 'active col-sm-2' : 'col-sm-2'} 
+            //     key={number}>
+            //     <PaginationLink 
+            //         style={exam.student_test_answers[i].question_choice_id === 0 ? {background : "white", color: '#007bff' } : {background: "#18d19f", color: '#fff'} } 
+            //         id={number} 
+            //         onClick={this.handleClick}
+            //     >
+            //         {number}
+            //     </PaginationLink>
+            // </PaginationItem>
+            
+                <Button key={number} 
+                outline
+                style={exam.student_test_answers[i].question_choice_id === 0 ? {margin: '.5em .5em .5em 0'} : {background: "#18d19f", color: '#fff', margin: '.5em .5em .5em 0'} } 
+                id={number}
+                className={currentPage === number ? "btn btn-md active" : "btn btn-md"}
+                color="primary"
+                onClick={this.handleClick}
+                >{number}</Button>
         )
     })
     
@@ -454,9 +506,10 @@ export class Exam extends Component {
                             Submit <FontAwesomeIcon icon={faCheckCircle} color="white" size="1x"/>
                         </Button> {' '}
                     </div>
-                    <Pagination size="lg" className="navs">
-                        {renderPageNumbers}
-                    </Pagination>
+                        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                            {renderPageNumbers}
+                        </div>
+                    
                 </Col>
             </Row>
             {this.state.alert}

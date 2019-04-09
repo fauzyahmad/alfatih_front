@@ -7,7 +7,7 @@ import './Panel.css'
 import axios from "axios";
 
 const defaultProps = {
-  baseUrl: 'http://157.230.33.225/api_alfatih/api'
+  baseUrl: 'https://api.alfatihcollege.com/api'
 }
 
 export class Panel extends Component {
@@ -42,13 +42,14 @@ export class Panel extends Component {
             let stateRes = await resLeaderboad
             localStorage.setItem('leaderboard', JSON.stringify(stateRes))
             this.setState({leaderboard: stateRes})
-            console.log(this.state.leaderboard)
+            // console.log(this.state.leaderboard)
         } catch(e) {
 
         }
     }
   render() {
     const numLeader = this.state.leaderboard.packetLeaderBoard.length 
+    console.log(this)
     return (
       <React.Fragment>
         <div className="leaderboard">
@@ -65,7 +66,7 @@ export class Panel extends Component {
                     </Col>
                     <Col xs="4" className="text-center">
                         <img alt="leaderboard"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
+                        src="https://aaccaa.org/wp-content/uploads/2016/11/profile_default.png"
                         className="rounded-circle text-center" width="80"
                         />
                     </Col>
@@ -76,18 +77,21 @@ export class Panel extends Component {
                         <h5 className="text-white">2 
                         <small> dari</small><span className="text-warning"> 200</span> </h5>
                     </Col> */}
-                    <Col xs="4" className="text-left">
-                        <small className="text-white text-smalls">
-                            Skor {this.state.leaderboard.scores.questionGroupScores[0].student_test_question_group.question_group.category.name}
-                        </small>
-                        <h5 className="text-white">{this.state.leaderboard.scores.questionGroupScores[0].score === null ? '0' : this.state.leaderboard.scores.questionGroupScores[0].score}</h5>
-                    </Col>
-                    <Col xs="4" className="text-left">
+                    {this.state.leaderboard.scores.questionGroupScores.map(scores => 
+                        <Col key={scores.id} xs="4" className="text-left">
+                            <small className="text-white text-smalls">
+                                Skor {scores.student_test_question_group.question_group.category.name}
+                            </small>
+                            <h5 className="text-white">{scores.score === null ? '0' : scores.score}</h5>
+                        </Col>
+                    )}
+                    
+                    {/* <Col xs="4" className="text-left">
                         <small className="text-white text-smalls">
                             Skor {this.state.leaderboard.scores.questionGroupScores[1].student_test_question_group.question_group.category.name}
                         </small>
                         <h5 className="text-white text-center">{this.state.leaderboard.scores.questionGroupScores[1].score === null ? '0' : this.state.leaderboard.scores.questionGroupScores[1].score}</h5>
-                    </Col>
+                    </Col> */}
                     {/* <Col xs="4" className="text-center">
                         <small>Posisi</small>
                         <p>1st</p>
@@ -113,14 +117,11 @@ export class Panel extends Component {
                 {this.state.leaderboard.packetLeaderBoard.map((leader, idx) => 
                     <Row className="middle-div" key={idx}>
                         <Col xs="2" >
-                            <h6 className="middle-div">{idx+1}</h6>
+                            <h6 className="middle-div">{leader.rank}</h6>
                         </Col>
                         <Col xs="7" className="text-left">
-                            <p className="middle-div">
-                                <img alt="leaderboard text-center"
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBkkd8zZVDspnLWtkp88gUWWCMghLRlKaSf_0R_RR_jgRGC3qg"
-                                className="rounded-circle" width="30"
-                                /> {leader.name}
+                            <p style={{fontSize: '10px'}} className="middle-div">
+                            {leader.name}
                             </p>
                         </Col>
                         <Col xs="3" className="text-right">

@@ -17,12 +17,12 @@ import logoImage from '../../image/logo.png'
 // const urlSekolah = 'http://jendela.data.kemdikbud.go.id/api/index.php/Csekolah/detailSekolahGET?mst_kode_wilayah=196000&bentuk=sma'
 export class Register extends Component {
     state = {
-        id_sekolah: '',
+        // id_sekolah: '',
         sekolah: [],
         cities: [],
         nama_sekolah: '',
         kode_kab_kota: '',
-        mst_kode_wilayah: '',
+        // mst_kode_wilayah: '',
         isDisabled: true,
         cluster: [],
         birth_date: '',
@@ -96,27 +96,27 @@ export class Register extends Component {
         console.log('city yg terpilih', selectedOption)
         let stateKodeKab = await selectedOption.value
         let trimStateKodeKab = await stateKodeKab.trim()
-        let resCities = await axios.get(`https://api.alfatihcollege.com/api/getCityOptions`)
-        let citiesMap = await resCities.data.cities
-        let result = citiesMap.filter(cities => {
-            return cities.kode_wilayah === stateKodeKab
-        })
-        let resultMstKode = await result[0].mst_kode_wilayah
-        let trimResultMst = await resultMstKode.trim()
-        this.setState({mst_kode_wilayah: trimResultMst})
+        // let resCities = await axios.get(`https://api.alfatihcollege.com/api/getCityOptions`)
+        // let citiesMap = await resCities.data.cities
+        // let result = citiesMap.filter(cities => {
+        //     return cities.kode_wilayah === stateKodeKab
+        // })
+        // let resultMstKode = await result[0].kode_wilayah
+        // let trimResultMst = await resultMstKode.trim()
+        // this.setState({mst_kode_wilayah: trimResultMst})
         this.setState({kode_kab_kota: trimStateKodeKab})
         this.setState({isDisabled: false})
         // console.log('kode_kab_kota state', stateKodeKab)
         this.getSchool()
     }
-    handleChangeSchool = async (selectedOption) => {
-        // this.setState({ selectedOption });
-        console.log(`Option selected:`, selectedOption);
-        let stateIdSekolah = await selectedOption.value
-        let stateNamaSekolah = await selectedOption.label
-        this.setState({id_sekolah: stateIdSekolah})
-        this.setState({nama_sekolah: stateNamaSekolah})
-    }
+    // handleChangeSchool = async (selectedOption) => {
+    //     // this.setState({ selectedOption });
+    //     console.log(`Option selected:`, selectedOption);
+    //     let stateIdSekolah = await selectedOption.value
+    //     let stateNamaSekolah = await selectedOption.label
+    //     this.setState({id_sekolah: stateIdSekolah})
+    //     this.setState({nama_sekolah: stateNamaSekolah})
+    // }
 
     checkPassword() {
         if(!this.state.password || this.state.password !== this.state.confirmPassword) {
@@ -232,13 +232,13 @@ export class Register extends Component {
                                 </div>
                                 
                                 <div className="form-group">
-                                    <Input name="birth_date"
-                                        type={this.state.type}
-                                        onFocus={this.onFocus}
-                                        onBlur={this.onBlur}
+                                    <Input style={{padding: '.7em 0 3em 0', fontSize: '0.8em'}} name="birth_date"
+                                        type="date"
+                                        // onFocus={this.onFocus}
+                                        // onBlur={this.onBlur}
                                         id="date" 
                                         placeholder="Tanggal Lahir"
-                                        value={this.state.birth_date}
+                                        // value={this.state.birth_date}
                                         onChange={(event) => this.handleChangeDate(event)}
                                         required>
                                     </Input>
@@ -273,7 +273,7 @@ export class Register extends Component {
                                         placeholder="Masukkan Nama Kota"
                                     />
                                 </div>
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <Select
                                         // value={selectedOption}
                                         onChange={this.handleChangeSchool}
@@ -284,19 +284,44 @@ export class Register extends Component {
                                         required
                                         placeholder="Masukkan Nama Sekolah"
                                     />
+                                </div> */}
+                                {/* <div className="form-group">
+                                    <TextInput
+                                        className="form-control"
+                                        type="text"
+                                        name="sekolah"
+                                        id="sekolah"
+                                        // disabled={this.state.isDisabled}
+                                        // value={this.state.nama_sekolah}
+                                        // required
+                                        errorMessage="Nama sekolah harus diisi"
+                                        placeholder="Ketik nama Sekolah" 
+                                    />
+                                </div> */}
+                                <div className="form-group">
+                                    <TextInput
+                                        className="form-control"
+                                        type="text"
+                                        name="sekolah"
+                                        id="sekolah"
+                                        disabled={this.state.isDisabled}
+                                        required
+                                        errorMessage="Sekolah harus diisi"
+                                        placeholder="Nama Sekolah..." 
+                                    />
                                 </div>
                                 <div className="form-group">
                                     <SelectGroup name="num_packets" id="num_packets"
-                                        required errorMessage="Kluster harus dipilih"
+                                        required errorMessage="Paket sudah dipilih"
                                     >
                                         <option value="">-- Pilih Jumlah Paket Soal --</option>
-                                        <option value="1">1 Paket</option>
-                                        <option value="3">3 Paket</option>
-                                        <option value="5">5 Paket</option>
+                                        <option value="1">Free Try Out</option>
+                                        {/* <option value="3">3 Paket</option>
+                                        <option value="5">5 Paket</option> */}
                                     </SelectGroup>                
                                 </div>
                                 
-                                <div className="form-group d-none">
+                                {/* <div className="form-group d-none">
                                     <TextInput
                                         className="form-control"
                                         type="text"
@@ -307,19 +332,7 @@ export class Register extends Component {
                                         errorMessage="ID sekolah"
                                         placeholder="ID Sekolah" 
                                     />
-                                </div>
-                                <div className="form-group d-none">
-                                    <TextInput
-                                        className="form-control"
-                                        type="text"
-                                        name="sekolah"
-                                        id="sekolah"
-                                        value={this.state.nama_sekolah}
-                                        // required
-                                        errorMessage="Sekolah"
-                                        placeholder="Sekolah" 
-                                    />
-                                </div>
+                                </div> */}
                                 <div className="form-group d-none">
                                     <TextInput
                                         className="form-control"
@@ -332,7 +345,7 @@ export class Register extends Component {
                                         placeholder="Kode Kab Kota" 
                                     />
                                 </div>
-                                <div className="form-group d-none">
+                                {/* <div className="form-group d-none">
                                     <TextInput
                                         className="form-control"
                                         type="text"
@@ -343,7 +356,7 @@ export class Register extends Component {
                                         errorMessage="Sekolah"
                                         placeholder="Kode Kab Kota" 
                                     />
-                                </div>
+                                </div> */}
                                 <button
                                   className={this.props.isLoaded === true ? "d-none" : "btn btn-lg btn-block btn-primary"}
                                   style={{display: 'table', margin: 'auto'}}>
